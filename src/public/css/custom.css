@@ -1,0 +1,162 @@
+/* Personalización del título principal (h1) */
+h1.my-4 {
+    font-size: 2.5rem;
+    color: #000000;
+    margin-bottom: 2rem;
+}
+
+h1.my-4 small {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+/* Estilo general para las tarjetas (.card) */
+.card {
+    flex: 0 0 auto;
+    width: 200px;
+    height: 200px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #000000;
+    text-align: center;
+}
+
+.card-title a {
+    text-decoration: none;
+    color: #000000;
+}
+
+.card-title a:hover {
+    color: #0056b3;
+}
+
+/* Estilo general para el contenedor */
+.container {
+    padding: 2rem 0;
+}
+
+/* Ajuste de las filas y columnas */
+.row {
+    display: flex;
+    width: 100%;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.col-lg-2 {
+    flex: 0 0 auto;
+    max-width: 100%;
+}
+
+/* Media Query: Ajustes para pantallas pequeñas (máximo 768px de ancho) */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .card-img-top {
+        height: 80px;
+    }
+
+    h1.my-4 {
+        font-size: 2rem;
+    }
+}
+
+/* Home */
+.dashboard-nav-item {
+    height: 15px;
+}
+
+.btn-custom {
+    display: block;
+    width: 100%;
+    background-color: #4f46e5; /* Color de fondo */
+    color: white; /* Color del texto */
+    padding: 16px 32px; /* Padding para hacer el botón más grande */
+    text-align: center; /* Centrar el texto */
+    border-radius: 12px; /* Bordes redondeados */
+    font-size: 18px; /* Tamaño del texto */
+    font-weight: bold; /* Texto en negrita */
+    margin-bottom: 16px; /* Espacio entre botones */
+    text-decoration: none; /* Quitar subrayado */
+}
+
+.btn-custom:hover {
+    background-color: #4338ca; /* Color de fondo al pasar el ratón */
+}
+
+.btn-group {
+    display: flex;
+    gap: 10px; /* Espacio entre los botones */
+    margin-top: 20px;
+}
+
+.btn-small {
+    display: inline-block;
+    background-color: #4f46e5; /* Color de fondo */
+    color: white; /* Color del texto */
+    padding: 8px 16px; /* Padding para hacer el botón más pequeño */
+    text-align: center; /* Centrar el texto */
+    border-radius: 8px; /* Bordes redondeados */
+    font-size: 14px; /* Tamaño del texto */
+    font-weight: bold; /* Texto en negrita */
+    text-decoration: none; /* Quitar subrayado */
+    gap: 10px; /* Espacio entre los botones */
+}
+
+.btn-small:hover {
+    background-color: #4338ca; /* Color de fondo al pasar el ratón */
+}
+
+.alert {
+    max-width: 100%; /* Asegúrate de que no se desborde */
+    word-wrap: break-word; /* Dividir texto largo en varias líneas */
+    margin: 20px auto; /* Centrar el mensaje y agregar espaciado vertical */
+}
+
+.container {
+    padding: 20px; /* Espaciado alrededor del contenedor principal */
+}
+
+
+.custom-alert {
+    padding: 15px;
+    margin: 10px 0; /* Espaciado entre mensajes */
+    border-radius: 5px; /* Esquinas redondeadas */
+    word-wrap: break-word; /* Para que el texto largo se divida en varias líneas */
+    max-width: 100%; /* Evitar que el contenido se salga del contenedor */
+}
+
+/* Estilos específicos para alertas */
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+

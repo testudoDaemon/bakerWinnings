@@ -1,0 +1,53 @@
+<div class="h-screen md:flex">
+    <div class="content-left md:w-1/2 flex justify-center items-center"
+        style="background-image: url('/images/LogoFondo.jpg'); background-size: cover; background-position: center;">
+    </div>
+    <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
+        <form action="/links/add" method="POST" class="bg-white">
+            <h1 class="text-gray-800 font-bold text-2xl mb-4">Ingresar Usuario</h1>
+
+            {{#if errors}}
+                <div class="alert alert-danger">
+                    <ul>
+                        {{#each errors}}
+                            <li>{{this.msg}}</li>
+                        {{/each}}
+                    </ul>
+                </div>
+            {{/if}}
+
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-user h-5 w-5 text-gray-400"></i>
+                <input class="pl-2 outline-none border-none" type="text" name="nombre" placeholder="Nombre " value="{{data.nombre}}" />
+            </div>
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
+                <input class="pl-2 outline-none border-none" type="text" name="apellido_paterno" placeholder="Apellido Paterno" value="{{data.apellido_paterno}}" />
+            </div>
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
+                <input class="pl-2 outline-none border-none" type="text" name="apellido_materno" placeholder="Apellido Materno" value="{{data.apellido_materno}}" />
+            </div>
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-envelope h-5 w-5 text-gray-400"></i>
+                <input class="pl-2 outline-none border-none" type="email" name="correo" placeholder="Email" value="{{data.correo}}" />
+            </div>
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-phone h-5 w-5 text-gray-400"></i>
+                <input class="pl-2 outline-none border-none" type="text" name="telefono" placeholder="Telefono" value="{{data.telefono}}" />
+            </div>
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
+                <i class="fas fa-lock h-5 w-5 text-gray-400"></i>
+                <input class="pl-2 outline-none border-none" type="password" name="contrasena" placeholder="Contraseña" />
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-success btn-block">
+                    Aceptar
+                </button>
+                <button class="btn btn-danger btn-block">
+                    Cancelar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,57 @@
+<div class="main-index">
+    <div class="index-module-header">
+        <div>
+            <img src="images/Logo Transparente.png" alt="Logo" class="index-module-header-logo">
+        </div>
+    </div>
+    <div class="index-module-square">
+        <h2>Inicio de Sesión</h2>
+        {{#if success_msg}}
+        <div class="alert alert-success">
+            {{success_msg}}
+        </div>
+        {{/if}}
+
+        {{#if error_msg}}
+        <div class="alert alert-danger">
+            {{error_msg}}
+        </div>
+        {{/if}}
+
+        {{#if error}}
+        <div class="alert alert-danger">
+            {{error}}
+        </div>
+        {{/if}}
+        <form action="/login" method="POST" class="login-form" id="loginForm">
+            <div class="form-group">
+                <label for="usuario">Usuario:</label>
+                <input type="text" name="num_empleado" placeholder="Numero de Usuario" class="form-control" autofocus
+                    required oninvalid="this.setCustomValidity('Ingrese su ID')" oninput="this.setCustomValidity('')" />
+            </div>
+            <div class="form-group">
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" name="contrasena" placeholder="Contraseña" class="form-control" required
+                    oninvalid="this.setCustomValidity('Ingrese su contraseña')" oninput="this.setCustomValidity('')" />
+            </div>
+            <!-- Campo oculto para enviar la acción del botón -->
+            <input type="hidden" id="actionType" name="actionType" value="">
+
+            <div class="button-group">
+                <button type="submit" class="btn common-button" onclick="setAction('ingresar')">Ingresar</button>
+                <button type="submit" class="btn common-button" onclick="setAction('gestionar')">Gestionar
+                    Usuario</button>
+                <button type="submit" class="btn common-button" onclick="setAction('registrar')">Registrarte</button>
+            </div>
+            <p>
+                <a href="/forgot-password" class="font-password">¿Olvidaste tu contraseña?</a>
+            </p>
+        </form>
+    </div>
+</div>
+<script>
+    // Función para cambiar el valor del campo oculto
+    function setAction(action) {
+        document.getElementById('actionType').value = action;
+    }
+</script>

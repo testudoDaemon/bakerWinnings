@@ -1,0 +1,119 @@
+<script>
+    async function buscarUsuario(event) {
+        event.preventDefault();
+        const idusuario = document.getElementById('idusuario').value;
+
+        try {
+            const response = await fetch('/links/buscar-usuario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idusuario })
+            });
+
+            if (!response.ok) {
+                throw new Error('Usuario no encontrado');
+            }
+
+            const data = await response.json();
+            document.getElementById('nombre').value = data.nombre;
+            document.getElementById('apellido_paterno').value = data.apellido_paterno;
+            document.getElementById('apellido_materno').value = data.apellido_materno;
+            document.getElementById('correo').value = data.correo;
+            document.getElementById('telefono').value = data.telefono;
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al buscar el usuario');
+        }
+    }
+
+    async function eliminarUsuario(event) {
+        event.preventDefault();
+        const idusuario = document.getElementById('idusuario').value;
+        const nombre = document.getElementById('nombre').value;
+        const apellido_paterno = document.getElementById('apellido_paterno').value;
+        const apellido_materno = document.getElementById('apellido_materno').value;
+        const correo = document.getElementById('correo').value;
+        const telefono = document.getElementById('telefono').value;
+
+        try {
+            const response = await fetch('/links/eliminar-usuario', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ idusuario, nombre, apellido_paterno, apellido_materno, correo, telefono })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.errors ? result.errors.map(err => err.msg).join(', ') : result.error);
+            }
+
+            alert(result.message);
+            // Redirigir o actualizar la página después de la eliminación
+            window.location.href = '/links/eliminar';
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error al eliminar el usuario: ' + error.message);
+        }
+    }
+</script>
+
+<div class="h-screen md:flex">
+    <div class="content-left md:w-1/2 flex justify-center items-center"
+        style="background-image: url('/images/LogoFondo.jpg'); background-size: cover; background-position: center;">
+    </div>
+    <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
+        <form id="buscarUsuarioForm" onsubmit="buscarUsuario(event)">
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <input type="text" id="idusuario" placeholder="Numero de empleado" name="idusuario" required />
+                <button class="btn btn-success btn-block" type="submit">Buscar</button>
+            </div>
+        </form>
+    </div>
+    <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
+        <form id="usuarioForm" onsubmit="eliminarUsuario(event)">
+            <h1 class="text-gray-800 font-bold text-2xl mb-4">Eliminar Usuario</h1>
+
+            {{#if errors}}
+            <div class="alert alert-danger">
+                <ul>
+                    {{#each errors}}
+                    <li>{{this.msg}}</li>
+                    {{/each}}
+                </ul>
+            </div>
+            {{/if}}
+
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-user h-5 w-5 text-gray-400"></i>
+                <input class="pl-2 outline-none border-none" type="text" id="nombre" placeholder="Nombre" name="nombre"
+                    value="{{data.nombre}}" />
+            </div>
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
+                <input type="text" id="apellido_paterno" placeholder="Apellido Paterno" name="apellido_paterno"
+                    value="{{data.apellido_paterno}}" />
+            </div>
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
+                <input type="text" id="apellido_materno" placeholder="Apellido Materno" name="apellido_materno"
+                    value="{{data.apellido_materno}}" />
+            </div>
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-envelope h-5 w-5 text-gray-400"></i>
+                <input type="text" id="correo" placeholder="Correo" name="correo" value="{{data.correo}}" />
+            </div>
+            <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
+                <i class="fas fa-phone h-5 w-5 text-gray-400"></i>
+                <input type="text" id="telefono" placeholder="Telefono" name="telefono" value="{{data.telefono}}" />
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-success btn-block">Eliminar Usuario</button>
+            </div>
+        </form>
+    </div>
+</div>

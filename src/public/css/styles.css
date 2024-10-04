@@ -1,0 +1,88 @@
+.index-module-header-logo {
+    max-width: 100%;
+    height: auto;
+    width: 150px; /* Ancho del logo */
+    margin-left: 0 auto; /* Centrar el logo horizontalmente */
+    display: block; /* Asegurarse de que el logo se comporte como un bloque */
+}
+
+.main-index {
+    display: flex;
+    flex-direction: column; /* Alinear elementos en columna */
+    justify-content: center; /* Centrar verticalmente */
+    align-items: center; /* Centrar horizontalmente */
+    height: 100vh; /* Asegúrate de que ocupe toda la altura de la ventana */
+    background-color: rgb(233, 199, 168); /* Color de fondo */
+    margin: 0; /* Eliminar márgenes */
+    padding: 0; /* Eliminar padding */
+    box-sizing: border-box; /* Incluir padding y border en el tamaño total */
+}
+
+.index-module-square {
+    width: 100%; /* Ajustar el ancho al 100% del contenedor */
+    max-width: 500px; /* Ancho máximo del cuadro */
+    background-color: rgb(233, 199, 168); /* Color de fondo */
+    border: 2px ridge rgb(92, 82, 82);
+    padding: 20px; /* Espacio interior */
+    margin: 20px 0; /* Espacio exterior solo arriba y abajo */
+    border-radius: 15px; /* Esquinas redondeadas */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    text-align: center;
+    box-sizing: border-box; /* Incluir padding y border en el tamaño total */
+    overflow: hidden; /* Evitar que los elementos se salgan del contenedor */
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espacio entre los campos del formulario */
+}
+
+.form-group {
+    width: 100%;
+    text-align: left;
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-around; /* Espacio uniforme entre botones */
+    flex-wrap: wrap; /* Para evitar que los botones se salgan en pantallas pequeñas */
+}
+
+.btn.common-button {
+    padding: 10px 20px;
+    background-color: #5c5252;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    max-width: 150px; /* Limitar el tamaño máximo de los botones */
+    margin: 10px 0; /* Añadir margen entre botones en pantallas pequeñas */
+}
+
+.font-password {
+    display: block;
+    margin-top: 10px;
+    color: #333;
+}
+
+/* Estilos para los mensajes Flash */
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
