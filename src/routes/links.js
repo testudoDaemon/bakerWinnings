@@ -34,12 +34,12 @@ router.get('/add', (req, res) => {
 
 
 router.post('/add', [
-    body('nombre').notEmpty().withMessage('Por favor, ingrese su nombre'),
-    body('apellido_paterno').notEmpty().withMessage('Por favor, ingrese su apellido paterno'),
-    body('apellido_materno').notEmpty().withMessage('Por favor, ingrese su apellido materno'),
-    body('correo').isEmail().withMessage('Por favor, ingrese un correo válido'),
-    body('telefono').notEmpty().withMessage('Por favor, ingrese su teléfono'),
-    body('contrasena').notEmpty().withMessage('Por favor, ingrese su contraseña')
+    body('nombre').notEmpty().withMessage('Falta nombre'),
+    body('apellido_paterno').notEmpty().withMessage('Falta apellido paterno'),
+    body('apellido_materno').notEmpty().withMessage('Falta apellido materno'),
+    body('correo').isEmail().withMessage('Falta correo'),
+    body('telefono').notEmpty().withMessage('Falta teléfono'),
+    body('contrasena').notEmpty().withMessage('Falta contraseña')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -142,12 +142,12 @@ router.get('/modificar_usuarios', (req, res) => {
 });
 
 router.post('/actualizar-usuario', [
-    body('num_empleado').notEmpty().withMessage('Por favor, ingrese el número de empleado'),
-    body('nombre').notEmpty().withMessage('Por favor, ingrese su nombre'),
-    body('apellido_paterno').notEmpty().withMessage('Por favor, ingrese su apellido paterno'),
-    body('apellido_materno').notEmpty().withMessage('Por favor, ingrese su apellido materno'),
-    body('correo').isEmail().withMessage('Por favor, ingrese un correo válido'),
-    body('telefono').notEmpty().withMessage('Por favor, ingrese su teléfono')
+
+    body('nombre').notEmpty().withMessage('Falta nombre'),                      // con el campo Buscar, no se puede modificar el ID
+    body('apellido_paterno').notEmpty().withMessage('Falta apellido paterno'),
+    body('apellido_materno').notEmpty().withMessage('Falta apellido materno'),
+    body('correo').isEmail().withMessage('Falta correo'),
+    body('telefono').notEmpty().withMessage('Falta teléfono')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -160,38 +160,39 @@ router.post('/actualizar-usuario', [
 
     const { num_empleado, nombre, apellido_paterno, apellido_materno, correo, telefono } = req.body;
     console.log('HOLAAAA ID Usuario:', num_empleado);  // Verifica que num_empleado tiene un valor
+
+        try {
+            // Actualiza la información del usuario
+            const resultUsuario = await pool.query(
+                'UPDATE Usuarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ? WHERE num_empleado = ?',
+                [nombre, apellido_paterno, apellido_materno, num_empleado]
+            );
+            console.log('Usuario actualizado:', resultUsuario);
+
+            // Actualiza el correo del usuario
+            const resultCorreo = await pool.query(
+                'UPDATE Correos SET correo = ? WHERE id_correo = (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
+                [correo, num_empleado]
+            );
+            console.log('Correo actualizado:', resultCorreo);
+
+            // Actualiza el teléfono del usuario
+            const resultTelefono = await pool.query(
+                'UPDATE Telefonos SET telefono = ? WHERE id_telefono = (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
+                [telefono, num_empleado]
+            );
+            console.log('Teléfono actualizado:', resultTelefono);
+
+            req.flash('success', 'Usuario actualizado correctamente');
+            res.redirect('/links/modificar_usuarios');
+        } catch (err) {
+            console.error('Error al actualizar el usuario:', err);
+            req.flash('error', 'Error al actualizar el usuario');
+            res.redirect('/links/modificar_usuarios');
+        }
     
-    
-    try {
-        // Actualiza la información del usuario
-        const resultUsuario = await pool.query(
-            'UPDATE Usuarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ? WHERE num_empleado = ?',
-            [nombre, apellido_paterno, apellido_materno, num_empleado]
-        );
-        console.log('Usuario actualizado:', resultUsuario);
-
-        // Actualiza el correo del usuario
-        const resultCorreo = await pool.query(
-            'UPDATE Correos SET correo = ? WHERE id_correo = (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
-            [correo, num_empleado]
-        );
-        console.log('Correo actualizado:', resultCorreo);
-
-        // Actualiza el teléfono del usuario
-        const resultTelefono = await pool.query(
-            'UPDATE Telefonos SET telefono = ? WHERE id_telefono = (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
-            [telefono, num_empleado]
-        );
-        console.log('Teléfono actualizado:', resultTelefono);
-
-        req.flash('success', 'Usuario actualizado correctamente');
-        res.redirect('/links/modificar_usuarios');
-    } catch (err) {
-        console.error('Error al actualizar el usuario:', err);
-        req.flash('error', 'Error al actualizar el usuario');
-        res.redirect('/links/modificar_usuarios');
-    }
-}); 
+      // Simula un retraso de 5 segundos
+});
 
 
 function queryAsync(sql, params) {
@@ -216,18 +217,22 @@ router.get('/eliminar', (req, res) => {
 // Ruta para manejar la eliminación de usuarios
 router.post('/eliminar-usuario', [
     body('idusuario').notEmpty().withMessage('Por favor, ingrese el ID del usuario'),
-    body('nombre').notEmpty().withMessage('Por favor, ingrese su nombre'),
-    body('apellido_paterno').notEmpty().withMessage('Por favor, ingrese su apellido paterno'),
-    body('apellido_materno').notEmpty().withMessage('Por favor, ingrese su apellido materno'),
-    body('correo').isEmail().withMessage('Por favor, ingrese un correo válido'),
-    body('telefono').notEmpty().withMessage('Por favor, ingrese su teléfono')
+    body('nombre').notEmpty().withMessage('Falta nombre'),
+    body('apellido_paterno').notEmpty().withMessage('Falta apellido paterno'),
+    body('apellido_materno').notEmpty().withMessage('Falta apellido materno'),
+    body('correo').isEmail().withMessage('Falta correo'),
+    body('telefono').notEmpty().withMessage('Falta teléfono')
 ], async (req, res) => {
     const errors = validationResult(req);
-    const { idusuario } = req.body;
-
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
+
+        setTimeout(() => {
+            res.redirect('eliminar-usuario', {errors: []});
+        }, 5000);
+        return;
     }
+    const { idusuario } = req.body;
 
     try {
         await queryAsync('DELETE FROM Usuarios_contrasena WHERE num_empleado = ?', [idusuario]);
@@ -240,7 +245,5 @@ router.post('/eliminar-usuario', [
         res.status(500).json({ error: 'Error al eliminar el usuario' });
     }
 });
-
-
 
 module.exports = router;

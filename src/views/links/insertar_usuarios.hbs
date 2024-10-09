@@ -7,38 +7,66 @@
             <h1 class="text-gray-800 font-bold text-2xl mb-4">Ingresar Usuario</h1>
 
             {{#if errors}}
-                <div class="alert alert-danger">
-                    <ul>
-                        {{#each errors}}
-                            <li>{{this.msg}}</li>
-                        {{/each}}
-                    </ul>
-                </div>
+            <div id="message" class="alert alert-danger">
+                <ul>
+                    {{#each errors}}
+                    <li>{{this.msg}}</li>
+                    {{/each}}
+                </ul>
+            </div>
             {{/if}}
+
+            {{#if success_msg}}
+            <div class="alert alert-success">
+                {{success_msg}}
+            </div>
+            {{/if}}
+
+            {{#if error_msg}}
+            <div class="alert alert-danger">
+                {{error_msg}}
+            </div>
+            {{/if}}
+
+            {{#if error}}
+            <div class="alert alert-danger">
+                {{error}}
+            </div>
+            {{/if}}
+
+
+            <!-- Elemento para mostrar mensajes de validación instantánea -->
+            <div id="instant-message" class="alert alert-danger" style="display: none;"></div>
 
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-user h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="text" name="nombre" placeholder="Nombre " value="{{data.nombre}}" />
+                <input class="pl-2 outline-none border-none" type="text" id="nombre" name="nombre" placeholder="Nombre "
+                    value="{{data.nombre}}" />
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="text" name="apellido_paterno" placeholder="Apellido Paterno" value="{{data.apellido_paterno}}" />
+                <input class="pl-2 outline-none border-none" type="text" id="apellido_paterno" name="apellido_paterno"
+                    placeholder="Apellido Paterno" value="{{data.apellido_paterno}}" />
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="text" name="apellido_materno" placeholder="Apellido Materno" value="{{data.apellido_materno}}" />
+                <input class="pl-2 outline-none border-none" type="text" id="apellido_materno" name="apellido_materno"
+                    placeholder="Apellido Materno" value="{{data.apellido_materno}}" />
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-envelope h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="email" name="correo" placeholder="Email" value="{{data.correo}}" />
+                <input class="pl-2 outline-none border-none" type="email"name="correo" placeholder="Email"
+                    value="{{data.correo}}" />
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-phone h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="text" name="telefono" placeholder="Telefono" value="{{data.telefono}}" />
+                <input class="pl-2 outline-none border-none" type="text" id="telefono" name="telefono" placeholder="Telefono"
+                    value="{{data.telefono}}" />
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
                 <i class="fas fa-lock h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="password" name="contrasena" placeholder="Contraseña" />
+                <input class="pl-2 outline-none border-none" type="password" name="contrasena"
+                    placeholder="Contraseña" />
             </div>
             <div class="btn-group">
                 <button class="btn btn-success btn-block">
@@ -51,3 +79,5 @@
         </form>
     </div>
 </div>
+
+<script src="/js/funtions.js"></script>
