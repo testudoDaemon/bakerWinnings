@@ -80,56 +80,63 @@ router.post('/add', [
         };
         await queryAsync('INSERT INTO Usuarios_contrasena SET ?', [userpass]);
 
-        req.flash('success', 'Usuario Insertado Correctamente');
-        res.redirect('/links/add');
+        res.render('links/insertar_usuarios', {
+            title: 'Insertar Usuarios',
+            success_msg: 'Usuario insertado correctamente',
+            error_msg: null
+        });
     } catch (err) {
         console.error(err);
-        req.flash('error', 'Error al insertar el usuario');
-        res.status(500).send('Error adding user');
+        res.render('links/insertar_usuarios', {
+            title: 'Agregar Usuario',
+            success_msg: null,
+            error_msg: 'Error al insertar el usuario'
+        });
     }
 });
 
 
-router.post('/buscar-usuario', async (req, res) => {
-    const { idusuario } = req.body;
-    console.log("ID Usuario recibido:", idusuario);  // Log to verify that the server receives the ID
+router.get('/buscar-usuario', async (req, res) => {
+    const { idusuario } = req.query;
 
     try {
-        const usuarioResult = await pool.query(
-            'SELECT num_empleado, nombre, apellido_paterno, apellido_materno FROM Usuarios WHERE num_empleado = ?',
-            [idusuario]
-        );
-        console.log("Usuario encontrado:", usuarioResult);  // Log to see the user data
-
-        if (!usuarioResult || usuarioResult.length === 0) {
-            return res.status(404).json({ message: 'Usuario no encontrado' });
+        const usuario = await pool.query('SELECT * FROM Usuarios WHERE num_empleado = ?', [idusuario]);
+        if (usuario.length > 0) {
+            const correo = await pool.query('SELECT correo FROM Correos WHERE id_correo = ?', [usuario[0].id_correo]);
+            const telefono = await pool.query('SELECT telefono FROM Telefonos WHERE id_telefono = ?', [usuario[0].id_telefono]);
+    
+            res.render('links/modificar_usuarios', {
+                title: 'Modificar Usuarios',
+                data: {
+                    num_empleado: usuario[0].num_empleado,
+                    nombre: usuario[0].nombre,
+                    apellido_paterno: usuario[0].apellido_paterno,
+                    apellido_materno: usuario[0].apellido_materno,
+                    correo: correo[0].correo,
+                    telefono: telefono[0].telefono
+                },
+                errors: [],
+                success_msg: null,
+                error_msg: null
+            });
+        } else {
+            res.render('links/modificar_usuarios', {
+                title: 'Modificar Usuarios',
+                data: {},
+                errors: [],
+                success_msg: null,
+                error_msg: 'Usuario no encontrado'
+            });
         }
-
-        const usuario = usuarioResult[0];
-
-        const correoResult = await pool.query(
-            'SELECT correo FROM Correos WHERE id_correo = (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
-            [idusuario]
-        );
-        console.log("Correo encontrado:", correoResult);
-
-        const telefonoResult = await pool.query(
-            'SELECT telefono FROM Telefonos WHERE id_telefono = (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
-            [idusuario]
-        );
-        console.log("Teléfono encontrado:", telefonoResult);
-        req.flash('success', 'Usuario encontrado');
-        res.json({
-            num_empleado: usuario.num_empleado,
-            nombre: usuario.nombre,
-            apellido_paterno: usuario.apellido_paterno,
-            apellido_materno: usuario.apellido_materno,
-            correo: correoResult.length > 0 ? correoResult[0].correo : '',
-            telefono: telefonoResult.length > 0 ? telefonoResult[0].telefono : ''
-        });
     } catch (err) {
-        console.error(err);
-        res.status(500).send('Error fetching user');
+        console.error('Error al buscar el usuario:', err);
+        res.render('links/modificar_usuarios', {
+            title: 'Modificar Usuarios',
+            data: {},
+            errors: [],
+            success_msg: null,
+            error_msg: 'Error al buscar el usuario'
+        });
     }
 });
 
@@ -144,7 +151,6 @@ router.get('/modificar_usuarios', (req, res) => {
 });
 
 router.post('/actualizar-usuario', [
-
     body('nombre').notEmpty().withMessage('Falta nombre'),                      // con el campo Buscar, no se puede modificar el ID
     body('apellido_paterno').notEmpty().withMessage('Falta apellido paterno'),
     body('apellido_materno').notEmpty().withMessage('Falta apellido materno'),
@@ -163,39 +169,42 @@ router.post('/actualizar-usuario', [
     const { num_empleado, nombre, apellido_paterno, apellido_materno, correo, telefono } = req.body;
     console.log('HOLAAAA ID Usuario:', num_empleado);  // Verifica que num_empleado tiene un valor
 
-        try {
-            // Actualiza la información del usuario
-            const resultUsuario = await pool.query(
-                'UPDATE Usuarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ? WHERE num_empleado = ?',
-                [nombre, apellido_paterno, apellido_materno, num_empleado]
-            );
-            console.log('Usuario actualizado:', resultUsuario);
-
-            // Actualiza el correo del usuario
-            const resultCorreo = await pool.query(
-                'UPDATE Correos SET correo = ? WHERE id_correo = (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
-                [correo, num_empleado]
-            );
-            console.log('Correo actualizado:', resultCorreo);
-
-            // Actualiza el teléfono del usuario
-            const resultTelefono = await pool.query(
-                'UPDATE Telefonos SET telefono = ? WHERE id_telefono = (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
-                [telefono, num_empleado]
-            );
-            console.log('Teléfono actualizado:', resultTelefono);
-
-            req.flash('success', 'Datos del empleado actualizados');
-            res.redirect('/links/modificar_usuarios');
-        } catch (err) {
-            console.error('Error al actualizar el usuario:', err);
-            req.flash('error', 'Error al actualizar el usuario');
-            res.redirect('/links/modificar_usuarios');
-        }
+    try {
+        // Actualiza la información del usuario
+        const resultUsuario = await pool.query(
+            'UPDATE Usuarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ? WHERE num_empleado = ?',
+            [nombre, apellido_paterno, apellido_materno, num_empleado]
+        );
+        console.log('Usuario actualizado:', resultUsuario);
     
-      // Simula un retraso de 5 segundos
+        // Actualiza el correo del usuario
+        const resultCorreo = await pool.query(
+            'UPDATE Correos SET correo = ? WHERE id_correo = (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
+            [correo, num_empleado]
+        );
+        console.log('Correo actualizado:', resultCorreo);
+    
+        // Actualiza el teléfono del usuario
+        const resultTelefono = await pool.query(
+            'UPDATE Telefonos SET telefono = ? WHERE id_telefono = (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
+            [telefono, num_empleado]
+        );
+        console.log('Teléfono actualizado:', resultTelefono);
+    
+        res.render('links/modificar_usuarios', {
+            title: 'Modificar Usuarios',
+            success_msg: 'Datos del empleado actualizados',
+            error_msg: null
+        });
+    } catch (err) {
+        console.error('Error al actualizar el usuario:', err);
+        res.render('links/modificar_usuarios', {
+            title: 'Modificar Usuarios',
+            success_msg: null,
+            error_msg: 'Error al actualizar el usuario'
+        });
+    }
 });
-
 
 function queryAsync(sql, params) {
     return new Promise((resolve, reject) => {
@@ -208,6 +217,48 @@ function queryAsync(sql, params) {
     });
 }
 
+
+router.get('/buscar-usuario-eliminar', async (req, res) => {
+    const { idusuario } = req.query;
+
+    try {
+        const usuario = await pool.query('SELECT * FROM Usuarios WHERE num_empleado = ?', [idusuario]);
+        if (usuario.length > 0) {
+            const correo = await pool.query('SELECT correo FROM Correos WHERE id_correo = ?', [usuario[0].id_correo]);
+            const telefono = await pool.query('SELECT telefono FROM Telefonos WHERE id_telefono = ?', [usuario[0].id_telefono]);
+    
+            res.render('links/eliminar_usuarios', {
+                title: 'Eliminar Usuarios',
+                data: {
+                    num_empleado: usuario[0].num_empleado,
+                    nombre: usuario[0].nombre,
+                    apellido_paterno: usuario[0].apellido_paterno,
+                    apellido_materno: usuario[0].apellido_materno,
+                    correo: correo[0].correo,
+                    telefono: telefono[0].telefono
+                },
+                success_msg: null,
+                error_msg: null
+            });
+        } else {
+            res.render('links/eliminar_usuarios', {
+                title: 'Eliminar Usuarios',
+                data: {},
+                success_msg: null,
+                error_msg: 'Usuario no encontrado'
+            });
+        }
+    } catch (err) {
+        console.error('Error al buscar el usuario:', err);
+        res.render('links/eliminar_usuarios', {
+            title: 'Eliminar Usuarios',
+            data: {},
+            success_msg: null,
+            error_msg: 'Error al buscar el usuario'
+        });
+    }
+});
+
 router.get('/eliminar', (req, res) => {
     res.render('links/eliminar_usuarios', {
         title: 'Eliminar Usuarios',
@@ -218,7 +269,6 @@ router.get('/eliminar', (req, res) => {
 
 // Ruta para manejar la eliminación de usuarios
 router.post('/eliminar-usuario', [
-    body('idusuario').notEmpty().withMessage('Por favor, ingrese el ID del usuario'),
     body('nombre').notEmpty().withMessage('Falta nombre'),
     body('apellido_paterno').notEmpty().withMessage('Falta apellido paterno'),
     body('apellido_materno').notEmpty().withMessage('Falta apellido materno'),
@@ -228,23 +278,30 @@ router.post('/eliminar-usuario', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
-
-        setTimeout(() => {
-            res.redirect('eliminar-usuario', {errors: []});
-        }, 5000);
-        return;
     }
+
     const { idusuario } = req.body;
 
     try {
-        await queryAsync('DELETE FROM Usuarios_contrasena WHERE num_empleado = ?', [idusuario]);
-        await queryAsync('DELETE FROM Usuarios WHERE num_empleado = ?', [idusuario]);
-        await queryAsync('DELETE FROM Correos WHERE id_correo = ?', [idusuario]);
-        await queryAsync('DELETE FROM Telefonos WHERE id_telefono = ?', [idusuario]);
-        res.status(200).json({ message: 'Usuario eliminado correctamente' });
+        await pool.query('DELETE FROM Usuarios_contrasena WHERE num_empleado = ?', [idusuario]);
+        await pool.query('DELETE FROM Usuarios WHERE num_empleado = ?', [idusuario]);
+        await pool.query('DELETE FROM Correos WHERE id_correo = ?', [idusuario]);
+        await pool.query('DELETE FROM Telefonos WHERE id_telefono = ?', [idusuario]);
+        
+        res.render('links/eliminar_usuarios', {
+            title: 'Eliminar Usuarios',
+            success_msg: 'Usuario eliminado correctamente',
+            error_msg: null,
+            data: {}
+        });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error al eliminar el usuario' });
+        console.error('Error al eliminar el usuario:', err);
+        res.render('links/eliminar_usuarios', {
+            title: 'Eliminar Usuarios',
+            success_msg: null,
+            error_msg: 'Error al eliminar el usuario',
+            data: {}
+        });
     }
 });
 

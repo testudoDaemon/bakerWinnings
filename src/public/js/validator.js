@@ -3,7 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function allowOnlyLetters(event) {
         const charCode = event.charCode || event.keyCode;
         const charStr = String.fromCharCode(charCode);
-        if (!/^[a-zA-Z]+$/.test(charStr)) {
+        const inputValue = event.target.value;
+
+        // Permitir letras o un espacio solo si:
+        // 1. Es una letra
+        // 2. Es un espacio solo si hay algo antes y no hay espacio al final
+        if (
+            !/^[a-zA-Z]+$/.test(charStr) &&
+            !(charStr === ' ' && /^[a-zA-Z]+(?: [a-zA-Z]+)*$/.test(inputValue + charStr))
+        ) {
             event.preventDefault();
             showMessage('Solo se pueden ingresar letras', 'danger');
         }
@@ -11,11 +19,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Función para permitir solo números
     function allowOnlyNumbers(event) {
+        const input = event.target;
         const charCode = event.charCode || event.keyCode;
         const charStr = String.fromCharCode(charCode);
+
+        // Permitir solo números
         if (!/^\d+$/.test(charStr)) {
             event.preventDefault();
             showMessage('Solo se pueden ingresar números', 'danger');
+            return;
+        }
+    }
+
+
+    // Función para verificar la longitud del número al perder el foco
+    function validatePhoneNumberLength(event) {
+        const input = event.target;
+
+        // Si el campo está vacío, no mostrar mensajes de error
+        if (input.value === '') {
+            input.classList.remove('is-valid', 'is-invalid');
+            return;
+        }
+
+        if (input.value.length !== 10) {
+            showMessage('El número debe tener exactamente 10 dígitos', 'danger');
         }
     }
 
@@ -36,19 +64,19 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage('Falta el símbolo @ en el correo', 'danger');
             emailInput.classList.add('is-invalid');
             emailInput.classList.remove('is-valid');
-        } 
+        }
         // Validar si falta el punto en el dominio
         else if (!emailValue.split('@')[1].includes('.')) {
             showMessage('Falta el punto en el dominio', 'danger');
             emailInput.classList.add('is-invalid');
             emailInput.classList.remove('is-valid');
-        } 
+        }
         // Validar si el formato completo es incorrecto
         else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailValue)) {
             showMessage('Formato de correo inválido', 'danger');
             emailInput.classList.add('is-invalid');
             emailInput.classList.remove('is-valid');
-        } 
+        }
         // Si el correo es válido
         else {
             showMessage('Correo válido', 'success');
@@ -57,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    
+
 
     // Función para prevenir pegar datos
     function preventPaste(event) {
@@ -78,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Asignar eventos a los inputs
+    const idEmpleadoInput = document.getElementById('idusuario');
     const nombreInput = document.getElementById('nombre');
     const apellidoPaternoInput = document.getElementById('apellido_paterno');
     const apellidoMaternoInput = document.getElementById('apellido_materno');
@@ -89,8 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
     apellidoPaternoInput.addEventListener('keypress', allowOnlyLetters);
     apellidoMaternoInput.addEventListener('keypress', allowOnlyLetters);
 
+    // Solo números en id 
+    idEmpleadoInput.addEventListener('keypress', allowOnlyNumbers);
+
     // Solo números en teléfono
     telefonoInput.addEventListener('keypress', allowOnlyNumbers);
+    telefonoInput.addEventListener('blur', validatePhoneNumberLength);
 
     // Validación en blur o input para correos
     correoInput.addEventListener('input', allowOnlyEmail);
@@ -103,8 +136,92 @@ document.addEventListener('DOMContentLoaded', () => {
     correoInput.addEventListener('paste', preventPaste);
     telefonoInput.addEventListener('paste', preventPaste);
 
-    // Validación de la contraseña
-    /*
+    // Validación de longitud de caracters
+    document.getElementById('idusuario').addEventListener('input', function () {
+        const idInput = document.getElementById('idusuario');
+        const warningMessage = document.getElementById('id-usuario-warning');
+        if (idInput.value.length >= 3) {
+            warningMessage.style.display = 'block';
+            setTimeout(() => {
+                warningMessage.style.display = 'none';
+            }, 4000);
+        } else {
+            warningMessage.style.display = 'none';
+        }
+    }
+    );
+
+    document.getElementById('nombre').addEventListener('input', function () {
+        const nameInput = document.getElementById('nombre');
+        const warningMessage = document.getElementById('nombre-warning');
+        if (nameInput.value.length >= 25) {
+            warningMessage.style.display = 'block';
+
+            setTimeout(() => {
+                warningMessage.style.display = 'none';
+            }, 4000);
+        } else {
+            warningMessage.style.display = 'none';
+        }
+    });
+
+    document.getElementById('apellido_paterno').addEventListener('input', function () {
+        const lastNameInput = document.getElementById('apellido_paterno');
+        const warningMessage = document.getElementById('apellido-paterno-warning');
+        if (lastNameInput.value.length >= 25) {
+            warningMessage.style.display = 'block';
+
+            setTimeout(() => {
+                warningMessage.style.display = 'none';
+            }, 4000);
+        } else {
+            warningMessage.style.display = 'none';
+        }
+    });
+
+    document.getElementById('apellido_materno').addEventListener('input', function () {
+        const lastNameInput = document.getElementById('apellido_materno');
+        const warningMessage = document.getElementById('apellido-materno-warning');
+        if (lastNameInput.value.length >= 25) {
+            warningMessage.style.display = 'block';
+
+            setTimeout(() => {
+                warningMessage.style.display = 'none';
+            }, 4000);
+        } else {
+            warningMessage.style.display = 'none';
+        }
+    });
+
+    document.getElementById('correo').addEventListener('input', function () {
+        const emailInput = document.getElementById('correo');
+        const warningMessage = document.getElementById('email-warning');
+        if (emailInput.value.length >= 20) {
+            warningMessage.style.display = 'block';
+
+            setTimeout(() => {
+                warningMessage.style.display = 'none';
+            }, 4000);
+        } else {
+            warningMessage.style.display = 'none';
+        }
+    });
+
+
+    document.getElementById('telefono').addEventListener('input', function () {
+        const phoneInput = document.getElementById('telefono');
+        const warningMessage = document.getElementById('phone-warning');
+        if (phoneInput.value.length >= 10) {
+            warningMessage.style.display = 'block';
+
+            setTimeout(() => {
+                warningMessage.style.display = 'none';
+            }, 4000);
+        } else {
+            warningMessage.style.display = 'none';
+        }
+    });
+
     document.getElementById('contrasena').addEventListener('input', function () {
         const passwordInput = document.getElementById('contrasena');
         const warningMessage = document.getElementById('password-warning');
@@ -117,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             warningMessage.style.display = 'none';
         }
-    });*/
+    });
 
     // Botón de cancelar (resetea el formulario)
     document.getElementById('cancelButton').addEventListener('click', function () {
