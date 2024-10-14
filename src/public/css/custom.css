@@ -160,3 +160,16 @@ h1.my-4 small {
     border: 1px solid #f5c6cb;
 }
 
+/* Estilos personalizados para el mensaje de advertencia */
+.password-warning {
+    font-size: 0.75rem; /* Tamaño de fuente más pequeño */
+    padding: 0.25rem; /* Espaciado interno más pequeño */
+    margin-top: 0.25rem; /* Espaciado superior más pequeño */
+    border-radius: 0.25rem; /* Bordes redondeados más pequeños */
+    background-color: #fef3c7; /* Color de fondo */
+    color: #92400e; /* Color del texto */
+    border: 1px solid #fcd34d; /* Borde */
+    width: fit-content; /* Ajustar el ancho al contenido */
+    height: auto; /* Ajustar la altura al contenido */
+    display: inline-block; /* Mostrar como un bloque en línea */
+}

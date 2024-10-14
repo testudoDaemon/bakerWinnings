@@ -7,7 +7,8 @@ const { data } = require('autoprefixer');
 const helpers = require('../lib/helpers');
 router.get('/home', (req, res) => {
     res.render('links/home', {
-        title: 'Home'
+        title: 'Home',
+        stylesheets: ['/css/shome.css']
     }
     );
 });
@@ -26,6 +27,7 @@ router.get('/gestion', (req, res) => {
 router.get('/add', (req, res) => {
     res.render('links/insertar_usuarios', {
         title: 'Insertar Usuarios',
+        stylesheets: ['/css/custom.css'],
         errors: [],
         data: {}
     }
@@ -183,7 +185,7 @@ router.post('/actualizar-usuario', [
             );
             console.log('Teléfono actualizado:', resultTelefono);
 
-            req.flash('success', 'Usuario actualizado correctamente');
+            req.flash('success', 'Datos del empleado actualizados');
             res.redirect('/links/modificar_usuarios');
         } catch (err) {
             console.error('Error al actualizar el usuario:', err);

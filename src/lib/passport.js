@@ -11,12 +11,15 @@ passport.use('local.signin', new LocalStrategy({
 }, async (req, num_empleado, contrasena, done) => {
     try {
         console.log("Número de empleado ingresado:", num_empleado);
+        console.log("Contraseña ingresada:", contrasena);
         const rows = await pool.query(`
             SELECT u.num_empleado, u.nombre, uc.password 
             FROM Usuarios u 
             JOIN Usuarios_contrasena uc ON u.num_empleado = uc.num_empleado 
             WHERE u.num_empleado = ?
         `, [num_empleado]);
+
+        console.log("Resultado de la consulta:", rows);
 
         if (rows.length > 0) {
             const user = rows[0];
