@@ -6,6 +6,9 @@
         <form action="/links/add" method="POST" class="bg-white">
             <h1 class="text-gray-800 font-bold text-2xl mb-4">Ingresar Usuario</h1>
 
+
+             <div id="instant-message" class="alert" style="display: none;"></div>
+
             {{#if errors}}
             <div id="message" class="alert alert-danger">
                 <ul>
@@ -41,27 +44,42 @@
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-user h-5 w-5 text-gray-400"></i>
                 <input class="pl-2 outline-none border-none" type="text" id="nombre" name="nombre" placeholder="Nombre "
-                    value="{{data.nombre}}" />
+                    value="{{data.nombre}}" maxlength="25" />
+            </div>
+            <div id="nombre-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 25 caracteres.
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
                 <input class="pl-2 outline-none border-none" type="text" id="apellido_paterno" name="apellido_paterno"
-                    placeholder="Apellido Paterno" value="{{data.apellido_paterno}}" />
+                    placeholder="Apellido Paterno" value="{{data.apellido_paterno}}" maxlength="25" />
+            </div>
+            <div id="apellido-paterno-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 25 caracteres.
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
                 <input class="pl-2 outline-none border-none" type="text" id="apellido_materno" name="apellido_materno"
-                    placeholder="Apellido Materno" value="{{data.apellido_materno}}" />
+                    placeholder="Apellido Materno" value="{{data.apellido_materno}}" maxlength="25" />
+            </div>
+            <div id="apellido-materno-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 25 caracteres.
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-envelope h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="email" id="correo" name="correo" list="emailDomains" placeholder="usuario@"
-                    value="{{data.correo}}" />
+                <input class="pl-2 outline-none border-none" type="email" id="correo" name="correo" list="emailDomains"
+                    placeholder="usuario@" value="{{data.correo}}" maxlength="20" />
+            </div>
+            <div id="email-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 20 caracteres.
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-phone h-5 w-5 text-gray-400"></i>
                 <input class="pl-2 outline-none border-none" type="text" id="telefono" name="telefono"
-                    placeholder="Telefono" value="{{data.telefono}}" />
+                    placeholder="Telefono" value="{{data.telefono}}" maxlength="10" />
+            </div>
+            <div id="phone-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 10 caracteres.
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
                 <i class="fas fa-lock h-5 w-5 text-gray-400"></i>

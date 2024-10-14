@@ -16,6 +16,7 @@ async function buscarUsuario(event) {
         }
 
         const data = await response.json();
+        document.getElementById('idusuario').value = data.num_empleado;
         document.getElementById('nombre').value = data.nombre;
         document.getElementById('apellido_paterno').value = data.apellido_paterno;
         document.getElementById('apellido_materno').value = data.apellido_materno;
@@ -30,7 +31,7 @@ async function buscarUsuario(event) {
 
 async function actualizarUsuario(event) {
     event.preventDefault();
-    const idusuario = document.getElementb('num_empleado').value;
+    const idusuario = document.getElementById('idusuario').value; 
     const nombre = document.getElementById('nombre').value;
     const apellido_paterno = document.getElementById('apellido_paterno').value;
     const apellido_materno = document.getElementById('apellido_materno').value;
@@ -43,7 +44,7 @@ async function actualizarUsuario(event) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ num_empleado, nombre, apellido_paterno, apellido_materno, correo, telefono })
+            body: JSON.stringify({ num_empleado: idusuario, nombre, apellido_paterno, apellido_materno, correo, telefono })
         });
 
         if (!response.ok) {

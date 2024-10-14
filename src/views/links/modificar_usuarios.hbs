@@ -3,17 +3,27 @@
         style="background-image: url('/images/LogoFondo.jpg'); background-size: cover; background-position: center;">
     </div>
     <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
-        <form id="buscarUsuarioForm" onsubmit="buscarUsuario(event)">
+        <form id="buscarUsuarioForm" method="GET" action="/links/buscar-usuario">
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
-                <input type="text" id="idusuario" placeholder="Número de empleado..." name="idusuario" required />
+                <input type="text" id="idusuario" name="idusuario" placeholder="Número de empleado..." maxlength="3"
+                    required />
                 <button class="btn btn-success btn-block" type="submit">Buscar</button>
+            </div>
+            <div id="id-usuario-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 3 caracteres.
             </div>
         </form>
     </div>
     <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
 
         <form id="usuarioForm" action="/links/actualizar-usuario" method="POST">
+
             <h1 class="text-gray-800 font-bold text-2xl mb-4">Modificar Usuario</h1>
+
+            <input type="hidden" id="num_empleado" name="num_empleado" value="{{data.num_empleado}}">
+
+            <!-- Elemento para mostrar mensajes de validación instantánea -->
+            <div id="instant-message" class="alert" style="display: none;"></div>
 
             {{#if errors}}
             <div id="message" class="alert alert-danger">
@@ -51,25 +61,42 @@
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-user h-5 w-5 text-gray-400"></i>
                 <input class="pl-2 outline-none border-none" type="text" id="nombre" placeholder=" Nombre" name="nombre"
-                    value="{{data.nombre}}" />
+                    value="{{data.nombre}}" maxlength="25" />
+            </div>
+            <div id="nombre-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 25 caracteres.
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
                 <input type="text" id="apellido_paterno" placeholder=" Apellido Paterno" name="apellido_paterno"
-                    value="{{data.apellido_paterno}}" />
+                    value="{{data.apellido_paterno}}" maxlength="25" />
+            </div>
+            <div id="apellido-paterno-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 25 caracteres.
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-user-tag h-5 w-5 text-gray-400"></i>
                 <input type="text" id="apellido_materno" placeholder="Apellido Materno" name="apellido_materno"
-                    value="{{data.apellido_materno}}" />
+                    value="{{data.apellido_materno}}" maxlength="25" />
+            </div>
+            <div id="apellido-materno-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 25 caracteres.
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-envelope h-5 w-5 text-gray-400"></i>
-                <input type="text" id="correo" placeholder="Correo" name="correo" value="{{data.correo}}" />
+                <input type="text" id="correo" placeholder="Correo" name="correo" value="{{data.correo}}"
+                    maxlength="20" />
+            </div>
+            <div id="email-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 20 caracteres.
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-phone h-5 w-5 text-gray-400"></i>
-                <input type="text" id="telefono" placeholder="Telefono" name="telefono" value="{{data.telefono}}" />
+                <input type="text" id="telefono" placeholder="Telefono" name="telefono" value="{{data.telefono}}"
+                    maxlength="10" />
+            </div>
+            <div id="phone-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 10 caracteres.
             </div>
             <div class="btn-group">
                 <button class="btn btn-success btn-block" type="submit">Aceptar</button>
