@@ -55,18 +55,21 @@
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-envelope h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="email"name="correo" placeholder="Email"
+                <input class="pl-2 outline-none border-none" type="email" id="correo" name="correo" list="emailDomains" placeholder="usuario@"
                     value="{{data.correo}}" />
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl mb-4">
                 <i class="fas fa-phone h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="text" id="telefono" name="telefono" placeholder="Telefono"
-                    value="{{data.telefono}}" />
+                <input class="pl-2 outline-none border-none" type="text" id="telefono" name="telefono"
+                    placeholder="Telefono" value="{{data.telefono}}" />
             </div>
             <div class="flex items-center border-2 py-2 px-3 rounded-2xl">
                 <i class="fas fa-lock h-5 w-5 text-gray-400"></i>
-                <input class="pl-2 outline-none border-none" type="password" name="contrasena"
-                    placeholder="Contraseña" />
+                <input class="pl-2 outline-none border-none" type="password" id="contrasena" name="contrasena"
+                    placeholder="Contraseña" maxlength="14" />
+            </div>
+            <div id="password-warning" class="alert alert-warning" style="display: none;">
+                Has alcanzado el límite de 14 caracteres.
             </div>
             <div class="btn-group">
                 <button class="btn btn-success btn-block">
@@ -81,3 +84,10 @@
 </div>
 
 <script src="/js/funtions.js"></script>
+<script src="/js/validator.js"></script>
+
+<script>
+    document.getElementById('cancelButton').addEventListener('click', function () {
+        document.getElementById('userForm').reset();
+    });
+</script>

@@ -4,44 +4,58 @@
             <img src="images/Logo Transparente.png" alt="Logo" class="index-module-header-logo">
         </div>
     </div>
+
+    {{#if errors}}
+    <div id="message" class="alert alert-danger">
+        <ul>
+            {{#each errors}}
+            <li>{{this.msg}}</li>
+            {{/each}}
+        </ul>
+    </div>
+    {{/if}}
+
+    {{#if success_msg}}
+    <div class="alert alert-success">
+        {{success_msg}}
+    </div>
+    {{/if}}
+
+    {{#if error_msg}}
+    <div id="instant-message" class="alert alert-danger">
+        {{error_msg}}
+    </div>
+    {{/if}}
+
+    {{#if error}}
+    <div class="alert alert-danger">
+        {{error}}
+    </div>
+    {{/if}}
+
+    <!-- Elemento para mostrar mensajes de validación instantánea -->
+    <div id="instant-message" class="alert alert-danger" style="display: none;"></div>
     <div class="index-module-square">
         <h2>Inicio de Sesión</h2>
-        {{#if success_msg}}
-        <div class="alert alert-success">
-            {{success_msg}}
-        </div>
-        {{/if}}
-
-        {{#if error_msg}}
-        <div class="alert alert-danger">
-            {{error_msg}}
-        </div>
-        {{/if}}
-
-        {{#if error}}
-        <div class="alert alert-danger">
-            {{error}}
-        </div>
-        {{/if}}
         <form action="/login" method="POST" class="login-form" id="loginForm">
             <div class="form-group">
                 <label for="usuario">Usuario:</label>
-                <input type="text" name="num_empleado" placeholder="Numero de Usuario" class="form-control" autofocus
-                    required oninvalid="this.setCustomValidity('Ingrese su ID')" oninput="this.setCustomValidity('')" />
+                <input type="text" name="num_empleado" id="num_empleado" placeholder="Numero de Usuario"
+                    class="form-control" value="{{data.num_usuario}}" autofocus />
             </div>
             <div class="form-group">
                 <label for="contrasena">Contraseña:</label>
-                <input type="password" name="contrasena" placeholder="Contraseña" class="form-control" required
-                    oninvalid="this.setCustomValidity('Ingrese su contraseña')" oninput="this.setCustomValidity('')" />
-            </div>
+                <!-- Mantener el valor del campo de contraseña -->
+                <input type="password" name="contrasena" placeholder="Contraseña" value="{{data.contrasena}}"
+                    class="form-control" maxlength="14" />
+            </div
             <!-- Campo oculto para enviar la acción del botón -->
             <input type="hidden" id="actionType" name="actionType" value="">
 
             <div class="button-group">
-                <button type="submit" class="btn common-button" onclick="setAction('ingresar')">Ingresar</button>
-                <button type="submit" class="btn common-button" onclick="setAction('gestionar')">Gestionar
-                    Usuario</button>
-                <button type="submit" class="btn common-button" onclick="setAction('registrar')">Registrarte</button>
+                <button type="submit" class="btn common-button" data-action="ingresar">Ingresar</button>
+                <button type="submit" class="btn common-button" data-action="gestionar">Gestionar Usuario</button>
+                <button type="submit" class="btn common-button" data-action="registrar">Registrarte</button>
             </div>
             <p>
                 <a href="/forgot-password" class="font-password">¿Olvidaste tu contraseña?</a>
@@ -49,9 +63,5 @@
         </form>
     </div>
 </div>
-<script>
-    // Función para cambiar el valor del campo oculto
-    function setAction(action) {
-        document.getElementById('actionType').value = action;
-    }
-</script>
+
+<script src="/js/auth.js"></script>
