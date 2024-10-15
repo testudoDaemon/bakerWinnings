@@ -15,11 +15,12 @@
         </form>
     </div>
     <div class="flex md:w-1/2 justify-center py-10 items-center bg-white">
-        <form id="usuarioForm" action="/links/eliminar-usuario" method="POST">
+        <form action="/links/eliminar-usuario" method="POST">
             <h1 class="text-gray-800 font-bold text-2xl mb-4">Eliminar Usuario</h1>
 
 
-            <input type="hidden" id="num_empleado" name="num_empleado" value="{{data.num_empleado}}">
+            <input type="hidden" name="idusuario" value="{{data.num_empleado}}">
+
             <!-- Elemento para mostrar mensajes de validación instantánea -->
             <div id="instant-message" class="alert" style="display: none;"></div>
 

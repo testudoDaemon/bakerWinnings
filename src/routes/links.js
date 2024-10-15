@@ -4,7 +4,11 @@ const pool = require('../database');
 const { use } = require('passport');
 const { body, validationResult } = require('express-validator');
 const { data } = require('autoprefixer');
-const helpers = require('../lib/helpers');
+const helpers = require('../lib/helpers');  
+const util = require('util'); // Asegúrate de tener esta línea
+
+const poolQuery = util.promisify(pool.query).bind(pool);
+
 router.get('/home', (req, res) => {
     res.render('links/home', {
         title: 'Home',
@@ -104,7 +108,7 @@ router.get('/buscar-usuario', async (req, res) => {
         if (usuario.length > 0) {
             const correo = await pool.query('SELECT correo FROM Correos WHERE id_correo = ?', [usuario[0].id_correo]);
             const telefono = await pool.query('SELECT telefono FROM Telefonos WHERE id_telefono = ?', [usuario[0].id_telefono]);
-    
+
             res.render('links/modificar_usuarios', {
                 title: 'Modificar Usuarios',
                 data: {
@@ -176,21 +180,21 @@ router.post('/actualizar-usuario', [
             [nombre, apellido_paterno, apellido_materno, num_empleado]
         );
         console.log('Usuario actualizado:', resultUsuario);
-    
+
         // Actualiza el correo del usuario
         const resultCorreo = await pool.query(
             'UPDATE Correos SET correo = ? WHERE id_correo = (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
             [correo, num_empleado]
         );
         console.log('Correo actualizado:', resultCorreo);
-    
+
         // Actualiza el teléfono del usuario
         const resultTelefono = await pool.query(
             'UPDATE Telefonos SET telefono = ? WHERE id_telefono = (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
             [telefono, num_empleado]
         );
         console.log('Teléfono actualizado:', resultTelefono);
-    
+
         res.render('links/modificar_usuarios', {
             title: 'Modificar Usuarios',
             success_msg: 'Datos del empleado actualizados',
@@ -226,7 +230,7 @@ router.get('/buscar-usuario-eliminar', async (req, res) => {
         if (usuario.length > 0) {
             const correo = await pool.query('SELECT correo FROM Correos WHERE id_correo = ?', [usuario[0].id_correo]);
             const telefono = await pool.query('SELECT telefono FROM Telefonos WHERE id_telefono = ?', [usuario[0].id_telefono]);
-    
+            console.log('Usuario:', idusuario);
             res.render('links/eliminar_usuarios', {
                 title: 'Eliminar Usuarios',
                 data: {
@@ -283,11 +287,12 @@ router.post('/eliminar-usuario', [
     const { idusuario } = req.body;
 
     try {
-        await pool.query('DELETE FROM Usuarios_contrasena WHERE num_empleado = ?', [idusuario]);
-        await pool.query('DELETE FROM Usuarios WHERE num_empleado = ?', [idusuario]);
-        await pool.query('DELETE FROM Correos WHERE id_correo = ?', [idusuario]);
-        await pool.query('DELETE FROM Telefonos WHERE id_telefono = ?', [idusuario]);
-        
+        console.log('ID Usuario:', idusuario);
+        await poolQuery('DELETE FROM Usuarios_contrasena WHERE num_empleado = ?', [idusuario]);
+        await poolQuery('DELETE FROM Usuarios WHERE num_empleado = ?', [idusuario]);
+        await poolQuery('DELETE FROM Correos WHERE id_correo = ?', [idusuario]);
+        await poolQuery('DELETE FROM Telefonos WHERE id_telefono = ?', [idusuario]);
+
         res.render('links/eliminar_usuarios', {
             title: 'Eliminar Usuarios',
             success_msg: 'Usuario eliminado correctamente',
