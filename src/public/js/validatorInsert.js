@@ -39,6 +39,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+
+    
     // Función para validar el correo electrónico
     function allowOnlyEmail(event) {
         const emailValue = event.target.value;
@@ -67,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             emailInput.classList.remove('is-invalid');
         }
     }
-
+   
     // Función para prevenir pegar datos
     function preventPaste(event) {
         event.preventDefault();
@@ -108,39 +110,34 @@ document.addEventListener('DOMContentLoaded', () => {
             input.addEventListener(event.type, event.handler);
         });
     }
-
     // Asignar eventos a los inputs
-    addInputEventListeners('idusuario', [
-        { type: 'keypress', handler: allowOnlyNumbers },
-        { type: 'input', handler: (event) => validateInputLength(event, 3, 'id-usuario-warning') }
-    ]);
-
-    addInputEventListeners('nombre', [
+    addInputEventListeners('nombreId', [
         { type: 'keypress', handler: allowOnlyLetters },
         { type: 'paste', handler: preventPaste },
-        { type: 'input', handler: (event) => validateInputLength(event, 25, 'nombre-warning') }
+        { type: 'input', handler: (event) => validateInputLength(event, 25, 'nom-warning') }
     ]);
 
-    addInputEventListeners('apellido_paterno', [
+    
+    addInputEventListeners('apellido_paternoId', [
         { type: 'keypress', handler: allowOnlyLetters },
         { type: 'paste', handler: preventPaste },
         { type: 'input', handler: (event) => validateInputLength(event, 25, 'apellido-paterno-warning') }
     ]);
 
-    addInputEventListeners('apellido_materno', [
+    addInputEventListeners('apellido_maternoId', [
         { type: 'keypress', handler: allowOnlyLetters },
         { type: 'paste', handler: preventPaste },
         { type: 'input', handler: (event) => validateInputLength(event, 25, 'apellido-materno-warning') }
     ]);
 
-    addInputEventListeners('correo', [
+    addInputEventListeners('correoId', [
         { type: 'input', handler: allowOnlyEmail },
         { type: 'blur', handler: allowOnlyEmail },
         { type: 'paste', handler: preventPaste },
         { type: 'input', handler: (event) => validateInputLength(event, 20, 'email-warning') }
     ]);
 
-    addInputEventListeners('telefono', [
+    addInputEventListeners('telefonoId', [
         { type: 'keypress', handler: allowOnlyNumbers },
         { type: 'blur', handler: validatePhoneNumberLength },
         { type: 'paste', handler: preventPaste },

@@ -5,6 +5,10 @@ const { use } = require('passport');
 const { body, validationResult } = require('express-validator');
 const { data } = require('autoprefixer');
 const helpers = require('../lib/helpers');
+const util = require('util'); // Asegúrate de tener esta línea
+
+const poolQuery = util.promisify(pool.query).bind(pool);
+
 router.get('/home', (req, res) => {
     res.render('links/home', {
         title: 'Home',
@@ -56,6 +60,26 @@ router.post('/add', [
     const { nombre, apellido_paterno, apellido_materno, correo, telefono, contrasena } = req.body;
 
     try {
+
+        const existingUser = await poolQuery('SELECT * FROM Usuarios WHERE nombre = ? AND apellido_paterno = ? AND apellido_materno = ?',
+            [nombre, apellido_paterno, apellido_materno]
+        );
+
+        const existingCorreo = await poolQuery('SELECT * FROM Correos WHERE correo = ?',
+            [correo]
+        );
+        const existingTelefono = await poolQuery('SELECT * FROM Telefonos WHERE telefono = ?',
+            [telefono]
+        );
+
+        if (existingUser.length > 0 || existingCorreo.length > 0 || existingTelefono.length > 0) {
+            return res.render('links/insertar_usuarios', {
+                title: 'Insertar Usuarios',
+                errors: [{ msg: 'Ya existe un registro con los mismos datos' }],
+                data: req.body
+            });
+        }
+
         const encryptedPassword = await helpers.encryptPassword(contrasena);
 
         const correoResult = await queryAsync('INSERT INTO Correos (correo) VALUES (?)', [correo]);
@@ -104,7 +128,7 @@ router.get('/buscar-usuario', async (req, res) => {
         if (usuario.length > 0) {
             const correo = await pool.query('SELECT correo FROM Correos WHERE id_correo = ?', [usuario[0].id_correo]);
             const telefono = await pool.query('SELECT telefono FROM Telefonos WHERE id_telefono = ?', [usuario[0].id_telefono]);
-    
+
             res.render('links/modificar_usuarios', {
                 title: 'Modificar Usuarios',
                 data: {
@@ -151,7 +175,7 @@ router.get('/modificar_usuarios', (req, res) => {
 });
 
 router.post('/actualizar-usuario', [
-    body('nombre').notEmpty().withMessage('Falta nombre'),                      // con el campo Buscar, no se puede modificar el ID
+    body('nombre').notEmpty().withMessage('Falta nombre'),
     body('apellido_paterno').notEmpty().withMessage('Falta apellido paterno'),
     body('apellido_materno').notEmpty().withMessage('Falta apellido materno'),
     body('correo').isEmail().withMessage('Falta correo'),
@@ -170,27 +194,51 @@ router.post('/actualizar-usuario', [
     console.log('HOLAAAA ID Usuario:', num_empleado);  // Verifica que num_empleado tiene un valor
 
     try {
+        // Verificar si ya existe un registro con los mismos datos
+        const existingUser = await pool.query(
+            'SELECT * FROM Usuarios WHERE nombre = ? AND apellido_paterno = ? AND apellido_materno = ? AND num_empleado != ?',
+            [nombre, apellido_paterno, apellido_materno, num_empleado]
+        );
+
+        const existingCorreo = await pool.query(
+            'SELECT * FROM Correos WHERE correo = ? AND id_correo != (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
+            [correo, num_empleado]
+        );
+
+        const existingTelefono = await pool.query(
+            'SELECT * FROM Telefonos WHERE telefono = ? AND id_telefono != (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
+            [telefono, num_empleado]
+        );
+
+        if (existingUser.length > 0 || existingCorreo.length > 0 || existingTelefono.length > 0) {
+            return res.render('links/modificar_usuarios', {
+                title: 'Modificar Usuario',
+                errors: [{ msg: 'Ya existe un registro con los mismos datos' }],
+                data: req.body
+            });
+        }
+
         // Actualiza la información del usuario
         const resultUsuario = await pool.query(
             'UPDATE Usuarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ? WHERE num_empleado = ?',
             [nombre, apellido_paterno, apellido_materno, num_empleado]
         );
         console.log('Usuario actualizado:', resultUsuario);
-    
+
         // Actualiza el correo del usuario
         const resultCorreo = await pool.query(
             'UPDATE Correos SET correo = ? WHERE id_correo = (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
             [correo, num_empleado]
         );
         console.log('Correo actualizado:', resultCorreo);
-    
+
         // Actualiza el teléfono del usuario
         const resultTelefono = await pool.query(
             'UPDATE Telefonos SET telefono = ? WHERE id_telefono = (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
             [telefono, num_empleado]
         );
         console.log('Teléfono actualizado:', resultTelefono);
-    
+
         res.render('links/modificar_usuarios', {
             title: 'Modificar Usuarios',
             success_msg: 'Datos del empleado actualizados',
@@ -226,7 +274,7 @@ router.get('/buscar-usuario-eliminar', async (req, res) => {
         if (usuario.length > 0) {
             const correo = await pool.query('SELECT correo FROM Correos WHERE id_correo = ?', [usuario[0].id_correo]);
             const telefono = await pool.query('SELECT telefono FROM Telefonos WHERE id_telefono = ?', [usuario[0].id_telefono]);
-    
+            console.log('Usuario:', idusuario);
             res.render('links/eliminar_usuarios', {
                 title: 'Eliminar Usuarios',
                 data: {
@@ -283,11 +331,12 @@ router.post('/eliminar-usuario', [
     const { idusuario } = req.body;
 
     try {
-        await pool.query('DELETE FROM Usuarios_contrasena WHERE num_empleado = ?', [idusuario]);
-        await pool.query('DELETE FROM Usuarios WHERE num_empleado = ?', [idusuario]);
-        await pool.query('DELETE FROM Correos WHERE id_correo = ?', [idusuario]);
-        await pool.query('DELETE FROM Telefonos WHERE id_telefono = ?', [idusuario]);
-        
+        console.log('ID Usuario:', idusuario);
+        await poolQuery('DELETE FROM Usuarios_contrasena WHERE num_empleado = ?', [idusuario]);
+        await poolQuery('DELETE FROM Usuarios WHERE num_empleado = ?', [idusuario]);
+        await poolQuery('DELETE FROM Correos WHERE id_correo = ?', [idusuario]);
+        await poolQuery('DELETE FROM Telefonos WHERE id_telefono = ?', [idusuario]);
+
         res.render('links/eliminar_usuarios', {
             title: 'Eliminar Usuarios',
             success_msg: 'Usuario eliminado correctamente',
