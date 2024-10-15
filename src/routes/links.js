@@ -4,7 +4,7 @@ const pool = require('../database');
 const { use } = require('passport');
 const { body, validationResult } = require('express-validator');
 const { data } = require('autoprefixer');
-const helpers = require('../lib/helpers');  
+const helpers = require('../lib/helpers');
 const util = require('util'); // Asegúrate de tener esta línea
 
 const poolQuery = util.promisify(pool.query).bind(pool);
@@ -60,6 +60,26 @@ router.post('/add', [
     const { nombre, apellido_paterno, apellido_materno, correo, telefono, contrasena } = req.body;
 
     try {
+
+        const existingUser = await poolQuery('SELECT * FROM Usuarios WHERE nombre = ? AND apellido_paterno = ? AND apellido_materno = ?',
+            [nombre, apellido_paterno, apellido_materno]
+        );
+
+        const existingCorreo = await poolQuery('SELECT * FROM Correos WHERE correo = ?',
+            [correo]
+        );
+        const existingTelefono = await poolQuery('SELECT * FROM Telefonos WHERE telefono = ?',
+            [telefono]
+        );
+
+        if (existingUser.length > 0 || existingCorreo.length > 0 || existingTelefono.length > 0) {
+            return res.render('links/insertar_usuarios', {
+                title: 'Insertar Usuarios',
+                errors: [{ msg: 'Ya existe un registro con los mismos datos' }],
+                data: req.body
+            });
+        }
+
         const encryptedPassword = await helpers.encryptPassword(contrasena);
 
         const correoResult = await queryAsync('INSERT INTO Correos (correo) VALUES (?)', [correo]);
@@ -155,7 +175,7 @@ router.get('/modificar_usuarios', (req, res) => {
 });
 
 router.post('/actualizar-usuario', [
-    body('nombre').notEmpty().withMessage('Falta nombre'),                      // con el campo Buscar, no se puede modificar el ID
+    body('nombre').notEmpty().withMessage('Falta nombre'),
     body('apellido_paterno').notEmpty().withMessage('Falta apellido paterno'),
     body('apellido_materno').notEmpty().withMessage('Falta apellido materno'),
     body('correo').isEmail().withMessage('Falta correo'),
@@ -174,6 +194,30 @@ router.post('/actualizar-usuario', [
     console.log('HOLAAAA ID Usuario:', num_empleado);  // Verifica que num_empleado tiene un valor
 
     try {
+        // Verificar si ya existe un registro con los mismos datos
+        const existingUser = await pool.query(
+            'SELECT * FROM Usuarios WHERE nombre = ? AND apellido_paterno = ? AND apellido_materno = ? AND num_empleado != ?',
+            [nombre, apellido_paterno, apellido_materno, num_empleado]
+        );
+
+        const existingCorreo = await pool.query(
+            'SELECT * FROM Correos WHERE correo = ? AND id_correo != (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
+            [correo, num_empleado]
+        );
+
+        const existingTelefono = await pool.query(
+            'SELECT * FROM Telefonos WHERE telefono = ? AND id_telefono != (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
+            [telefono, num_empleado]
+        );
+
+        if (existingUser.length > 0 || existingCorreo.length > 0 || existingTelefono.length > 0) {
+            return res.render('links/modificar_usuarios', {
+                title: 'Modificar Usuario',
+                errors: [{ msg: 'Ya existe un registro con los mismos datos' }],
+                data: req.body
+            });
+        }
+
         // Actualiza la información del usuario
         const resultUsuario = await pool.query(
             'UPDATE Usuarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ? WHERE num_empleado = ?',
