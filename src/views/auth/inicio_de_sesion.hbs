@@ -22,7 +22,7 @@
         <form action="/login" method="POST" class="login-form" id="loginForm">
             <div class="form-group">
                 <label for="usuario">Usuario:</label>
-                <input type="text" name="num_empleado" id="num_empleado" placeholder="Numero de empleado"
+                <input type="text" name="num_empleado" id="num_empleado" placeholder="Número de empleado"
                     class="form-control" value="{{data.num_usuario}}" autofocus maxlength="3" minlength="1" />
                 {{#if errors.num_empleado}}
                 <div class="alert alert-danger">{{errors.num_empleado.msg}}</div>
