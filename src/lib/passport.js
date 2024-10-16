@@ -10,8 +10,6 @@ passport.use('local.signin', new LocalStrategy({
     passReqToCallback: true
 }, async (req, num_empleado, contrasena, done) => {
     try {
-        console.log("Número de empleado ingresado:", num_empleado);
-        console.log("Contraseña ingresada:", contrasena);
         const rows = await pool.query(`
             SELECT u.num_empleado, u.nombre, uc.password 
             FROM Usuarios u 
@@ -19,28 +17,27 @@ passport.use('local.signin', new LocalStrategy({
             WHERE u.num_empleado = ?
         `, [num_empleado]);
 
-        console.log("Resultado de la consulta:", rows);
-
         if (rows.length > 0) {
             const user = rows[0];
-            console.log("Contraseña en base de datos:", user.password);
             const validPassword = await helpers.matchPassword(contrasena, user.password);
 
             if (validPassword) {
                 done(null, user, req.flash('success', 'Bienvenido ' + user.nombre));
             } else {
-                console.log("Contraseña incorrecta");
-                done(null, false, req.flash('message', 'Contraseña incorrecta'));
+                done(null, false, { message: 'Contraseña incorrecta' });
             }
         } else {
-            console.log("Usuario no encontrado");
-            return done(null, false, req.flash('message', 'El usuario no existe'));
+            // Usuario no encontrado, devolveremos un mensaje genérico si la contraseña también está mal
+            return done(null, false, { message: 'Ingresar número de empleado y contraseña correcta' });
         }
     } catch (err) {
         console.error(err);
         return done(err);
     }
 }));
+
+
+
 
 
 passport.serializeUser((user, done) => {
