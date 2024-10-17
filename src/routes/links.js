@@ -196,17 +196,17 @@ router.post('/actualizar-usuario', [
     try {
         // Verificar si ya existe un registro con los mismos datos
         const existingUser = await pool.query(
-            'SELECT * FROM Usuarios WHERE nombre = ? AND apellido_paterno = ? AND apellido_materno = ? AND num_empleado != ?',
+            'SELECT * FROM Usuarios WHERE LOWER(nombre) = ? AND LOWER(apellido_paterno) = ? AND LOWER(apellido_materno) = ? AND LOWER(num_empleado) != ?',
             [nombre, apellido_paterno, apellido_materno, num_empleado]
         );
 
         const existingCorreo = await pool.query(
-            'SELECT * FROM Correos WHERE correo = ? AND id_correo != (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
+            'SELECT * FROM Correos WHERE LOWER(correo) = ? AND id_correo != (SELECT id_correo FROM Usuarios WHERE num_empleado = ?)',
             [correo, num_empleado]
         );
 
         const existingTelefono = await pool.query(
-            'SELECT * FROM Telefonos WHERE telefono = ? AND id_telefono != (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
+            'SELECT * FROM Telefonos WHERE LOWER(telefono) = ? AND LOWER(id_telefono) != (SELECT id_telefono FROM Usuarios WHERE num_empleado = ?)',
             [telefono, num_empleado]
         );
 
@@ -219,6 +219,7 @@ router.post('/actualizar-usuario', [
         }
 
         // Actualiza la información del usuario
+        
         const resultUsuario = await pool.query(
             'UPDATE Usuarios SET nombre = ?, apellido_paterno = ?, apellido_materno = ? WHERE num_empleado = ?',
             [nombre, apellido_paterno, apellido_materno, num_empleado]

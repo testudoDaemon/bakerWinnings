@@ -111,6 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Asignar eventos a los inputs
     addInputEventListeners('idusuario', [
+        { type: 'paste', handler: preventPaste },
         { type: 'keypress', handler: allowOnlyNumbers },
         { type: 'input', handler: (event) => validateInputLength(event, 3, 'id-usuario-warning') }
     ]);
