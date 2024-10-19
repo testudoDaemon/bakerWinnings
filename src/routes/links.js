@@ -428,6 +428,98 @@ router.post('/productos', [
     }
 });
 
+// Ruta para actualizar un producto
+router.post('/actualizar-producto', [
+    body('nombre_producto').notEmpty().withMessage('Falta nombre del producto'),
+    body('costo_producto').notEmpty().withMessage('Falta el costo del producto'),
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.render('links/productos', {
+            title: 'Productos',
+            errors: errors.array(),
+            data: req.body 
+        });
+    }
+
+    // Si no hay errores, procede con la lógica de actualización de producto
+    const { id_ingrediente, nombre_producto, costo_producto } = req.body;
+
+    try {
+        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND id_ingrediente != ?',
+            [nombre_producto, costo_producto, id_ingrediente]
+        );
+
+        if (existingProducto.length > 0) {
+            return res.render('links/productos', {
+                title: 'Productos',
+                errors: [{ msg: 'Se repiten los datos' }],
+                data: req.body
+            });
+        }
+
+        await poolQuery('UPDATE ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ? WHERE id_ingrediente = ?',
+            [nombre_producto, costo_producto, id_ingrediente]
+        );
+
+        res.render('links/productos', {
+            title: 'Productos',
+            success_msg: 'Producto actualizado correctamente',
+            error_msg: null
+        });
+    } catch (err) {
+        console.error(err);
+        res.render('links/productos', {
+            title: 'Productos',
+            success_msg: null,
+            error_msg: 'Error al actualizar producto'
+        });
+    }
+});
+
+// Ruta para eliminar un producto
+router.post('/eliminar-producto', [
+    body('id_ingrediente').notEmpty().withMessage('Falta el ID del producto')
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.render('links/productos', {
+            title: 'Productos',
+            errors: errors.array(),
+            data: req.body 
+        });
+    }
+
+    // Si no hay errores, procede con la lógica de eliminación de producto
+    const { id_ingrediente } = req.body;
+
+    try {
+        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE id_ingrediente = ?', [id_ingrediente]);
+
+        if (existingProducto.length === 0) {
+            return res.render('links/productos', {
+                title: 'Productos',
+                errors: [{ msg: 'El producto no existe' }],
+                data: req.body
+            });
+        }
+
+        await poolQuery('DELETE FROM ingredientes WHERE id_ingrediente = ?', [id_ingrediente]);
+
+        res.render('links/productos', {
+            title: 'Productos',
+            success_msg: 'Producto eliminado correctamente',
+            error_msg: null
+        });
+    } catch (err) {
+        console.error(err);
+        res.render('links/productos', {
+            title: 'Productos',
+            success_msg: null,
+            error_msg: 'Error al eliminar producto'
+        });
+    }
+});
 
 router.get('/produccion', (req, res) => {
     res.render('links/produccion', {

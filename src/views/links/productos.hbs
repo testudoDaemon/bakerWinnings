@@ -1,111 +1,127 @@
-<!-- Seccion del encabezado -->
+<!-- Sección del encabezado -->
 <nav class="navbar navbar-light">
-	<div class="container-fluid">
-		<!-- Botón de la barra lateral a la izquierda -->
-		<button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
-			<span class="navbar-toggler-icon"></span>
-		</button>
+    <div class="container-fluid">
+        <!-- Botón de la barra lateral a la izquierda -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-		<!-- Logotipo centrado -->
-		<a class="navbar-brand mx-auto" href="http://localhost:3000/links/home">
-			<img class="img-fluid" src="/images/Logo Transparente.png" alt="My Brand" width="100px" height="100px">
-		</a>
-	</div>
+        <!-- Logotipo centrado -->
+        <a class="navbar-brand mx-auto" href="http://localhost:3000/links/home">
+            <img class="img-fluid" src="/images/Logo Transparente.png" alt="My Brand" width="100px" height="100px">
+        </a>
+    </div>
 
-	<!-- Barra lateral -->
-	<div class="offcanvas offcanvas-start p-2 bg-light" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-		<div class="offcanvas-header">
-			<h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
-			<button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-		</div>
-		<div class="offcanvas-body">
-			<div class="row">
-				<div class="col">
-					<ul id="menu-menu-1" class="navbar-nav">
-						<li class="menu-item nav-item">
-							<a href="https://library.livecanvas.com/starters" class="nav-link">BS5 Page Templates</a>
-						</li>
-						<li class="menu-item nav-item">
-							<a href="https://library.livecanvas.com/sections/" class="nav-link">BS5 Snippets</a>
-						</li>
-					</ul>
-				</div>
-			</div>
-		</div>
-	</div>
-</nav>
-
-<div class="container mt-5">
-        <h2>Gestión de Productos (Ingredientes)</h2>
-
-        <div class="row">
-            <!-- Columna para el formulario -->
-            <div class="col-md-6">
-                
-                {{#if errors}}
-                    <ul>
-                        {{#each errors}}
-                            <li>{{this.msg}}</li>
-                        {{/each}}
+    <!-- Barra lateral -->
+    <div class="offcanvas offcanvas-start p-2 bg-light" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="row">
+                <div class="col">
+                    <ul id="menu-menu-1" class="navbar-nav">
+                        <li class="menu-item nav-item">
+                            <a href="https://library.livecanvas.com/starters" class="nav-link">BS5 Page Templates</a>
+                        </li>
+                        <li class="menu-item nav-item">
+                            <a href="https://library.livecanvas.com/sections/" class="nav-link">BS5 Snippets</a>
+                        </li>
                     </ul>
-                {{/if}}
-                {{#if success_msg}}
-                    <p>{{success_msg}}</p>
-                {{/if}}
-                <form action="/productos" method="POST">
-                    <div class="form-group">
-                        <label for="nombre_ingrediente">Nombre del Ingrediente:</label>
-                        <input type="text" class="form-control" id="nombre_ingrediente" name="nombre_ingrediente" value="{{data.nombre_ingrediente}}">
-                    </div>
-                    <div class="form-group">
-                        <label for="costo_ingrediente">Costo del Ingrediente:</label>
-                        <input type="text" class="form-control" id="costo_ingrediente" name="costo_ingrediente" value="{{data.costo_ingrediente}}">
-                    </div>
-                    <button type="submit" class="btn btn-primary mt-3">Añadir Ingrediente</button>
-                </form>
-            </div>
-
-            <!-- Columna para la tabla -->
-            <div class="col-md-6">
-                <h3>Lista de Productos</h3>
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>Nombre del Producto</th>
-                            <th>Costo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tabla-productos"></tbody>
-                </table>
+                </div>
             </div>
         </div>
     </div>
+</nav>
 
-    <!-- Modal para editar un producto -->
-    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editProductModalLabel">Editar Producto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+<!-- Sección de pestañas y contenido -->
+<div class="container mt-5">
+    <div class="row">
+        <!-- Columna de la izquierda para las pestañas y formularios -->
+        <div class="col-md-6">
+            <h2>Gestión de Productos (Ingredientes)</h2>
+            
+            <!-- Pestañas -->
+            <ul class="nav nav-tabs" id="productoTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="ingresar-tab" data-bs-toggle="tab" data-bs-target="#ingresar" type="button" role="tab" aria-controls="ingresar" aria-selected="true">Ingresar</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="actualizar-tab" data-bs-toggle="tab" data-bs-target="#actualizar" type="button" role="tab" aria-controls="actualizar" aria-selected="false">Actualizar</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="eliminar-tab" data-bs-toggle="tab" data-bs-target="#eliminar" type="button" role="tab" aria-controls="eliminar" aria-selected="false">Eliminar</button>
+                </li>
+            </ul>
+
+            <!-- Contenido de las pestañas -->
+            <div class="tab-content" id="productoTabsContent">
+                <!-- Formulario de ingresar -->
+                <div class="tab-pane fade show active" id="ingresar" role="tabpanel" aria-labelledby="ingresar-tab">
+                    <form action="/productos" method="POST" class="mt-3">
+                        <div class="form-group">
+                            <label for="nombre_ingrediente">Nombre del Ingrediente:</label>
+                            <input type="text" class="form-control" id="nombre_ingrediente" name="nombre_ingrediente">
+                        </div>
+                        <div class="form-group">
+                            <label for="costo_ingrediente">Costo del Ingrediente:</label>
+                            <input type="text" class="form-control" id="costo_ingrediente" name="costo_ingrediente">
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-3">Añadir Ingrediente</button>
+                    </form>
                 </div>
-                <div class="modal-body">
-                    <form action="/links/editar" method="POST">
-                        <input type="hidden" id="edit_idIngrediente" name="idIngrediente">
-                        <div class="mb-3">
-                            <label for="edit_nombre_ingrediente" class="form-label">Nombre del Producto</label>
-                            <input type="text" class="form-control" id="edit_nombre_ingrediente" name="nombre_ingrediente" required>
+
+                <!-- Formulario de actualizar -->
+                <div class="tab-pane fade" id="actualizar" role="tabpanel" aria-labelledby="actualizar-tab">
+                    <form id="formEditarProducto" onsubmit="editarProducto(event)" class="mt-3">
+                        <input type="hidden" id="idIngrediente" name="idIngrediente">
+                        <div class="form-group">
+                            <label for="nombre_ingrediente">Nombre del Producto</label>
+                            <input type="text" class="form-control" id="nombre_ingrediente" name="nombre_ingrediente">
                         </div>
-                        <div class="mb-3">
-                            <label for="edit_costo_ingrediente" class="form-label">Costo del Producto</label>
-                            <input type="number" class="form-control" id="edit_costo_ingrediente" name="costo_ingrediente" step="0.01" required>
+                        <div class="form-group">
+                            <label for="costo_ingrediente">Costo del Producto</label>
+                            <input type="text" class="form-control" id="costo_ingrediente" name="costo_ingrediente">
                         </div>
-                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
+                    </form>
+                </div>
+
+                <!-- Formulario de eliminar -->
+                <div class="tab-pane fade" id="eliminar" role="tabpanel" aria-labelledby="eliminar-tab">
+                    <form id="formEliminarProducto" onsubmit="eliminarProducto(event)" class="mt-3">
+                        <input type="hidden" id="idIngrediente" name="idIngrediente">
+                        <div class="form-group">
+                            <label for="nombre_ingrediente">Nombre del Producto</label>
+                            <input type="text" class="form-control" id="nombre_ingrediente" name="nombre_ingrediente" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="costo_ingrediente">Costo del Producto</label>
+                            <input type="text" class="form-control" id="costo_ingrediente" name="costo_ingrediente" readonly>
+                        </div>
+                        <button type="submit" class="btn btn-danger mt-3">Eliminar Producto</button>
                     </form>
                 </div>
             </div>
         </div>
-    </div>
 
+        <!-- Columna de la derecha para la tabla -->
+        <div class="col-md-6">
+            <h3>Lista de Productos</h3>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Nombre del Producto</th>
+                        <th>Costo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-productos"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Incluye el script de funciones -->
 <script src="/js/funtions.js"></script>
