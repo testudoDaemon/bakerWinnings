@@ -90,3 +90,45 @@ async function eliminarUsuario(event) {
     }
 }
 
+async function buscarProducto() {
+    try {
+        const response = await fetch('/links/api/productos', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) { 
+            throw new Error('Ingredientes no encontrados');
+        }
+
+        const data = await response.json();
+        generarTabla(data);
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al buscar los ingredientes');
+    }
+}
+
+function generarTabla(ingredientes) {
+    const tabla = document.getElementById('tabla-productos');
+    tabla.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
+
+    ingredientes.forEach(ingrediente => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+            <td>${ingrediente.nombre_ingrediente}</td>
+            <td>${ingrediente.costo_ingrediente}</td>
+            <td>
+                <!-- Aquí puedes agregar botones de acción, como editar o eliminar -->
+                <button class="btn btn-primary btn-sm">Editar</button>
+                <button class="btn btn-danger btn-sm">Eliminar</button>
+            </td>
+        `;
+        tabla.appendChild(fila);
+    });
+}
+
+// Ejecutar buscarProducto cuando la página se haya cargado completamente
+document.addEventListener('DOMContentLoaded', buscarProducto);

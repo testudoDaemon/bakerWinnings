@@ -6,6 +6,7 @@ const { body, validationResult } = require('express-validator');
 const { data } = require('autoprefixer');
 const helpers = require('../lib/helpers');
 const util = require('util'); // Asegúrate de tener esta línea
+const { error } = require('console');
 
 const poolQuery = util.promisify(pool.query).bind(pool);
 
@@ -353,6 +354,55 @@ router.post('/eliminar-usuario', [
             data: {}
         });
     }
+});
+
+router.get('/productos', (req, res) => {
+    res.render('links/productos', {
+        title: 'Productos',
+        errors: [],
+        data: {}
+    }); 
+});
+
+// Nueva ruta para obtener los datos de los ingredientes
+router.get('/api/productos', async (req, res) => {
+    try {
+        const ingredientes = await pool.query('SELECT * FROM ingredientes');
+        res.json(ingredientes);
+    } catch (error) {
+        console.error('Error al obtener los ingredientes: ', error);
+        res.status(500).json({ error: 'Error al obtener los ingredientes' });
+    }
+});
+
+// Ruta para agregar un producto
+router.post('/agregar', async (req, res) => {
+    const { nombre_ingrediente, costo_ingrediente } = req.body;
+    await pool.query('INSERT INTO Ingredientes (nombre_ingrediente, costo_ingrediente) VALUES (?, ?)', [nombre_ingrediente, costo_ingrediente]);
+    res.redirect('/productos');
+});
+
+// Ruta para editar un producto existente
+router.post('/editar', async (req, res) => {
+    const { idIngrediente, nombre_ingrediente, costo_ingrediente } = req.body;
+    await pool.query('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ? WHERE idIngrediente = ?', [nombre_ingrediente, costo_ingrediente, idIngrediente]);
+    res.redirect('/productos');
+});
+
+// Ruta para eliminar un producto
+router.post('/eliminar/:id', async (req, res) => {
+    const { id } = req.params;
+    await pool.query('DELETE FROM Ingredientes WHERE idIngrediente = ?', [id]);
+    res.redirect('/productos');
+});
+
+
+router.get('/produccion', (req, res) => {
+    res.render('links/produccion', {
+        title: 'Produccion',
+        errors: [],
+        data: {}
+    });
 });
 
 router.get('/ventas', (req, res) => {
