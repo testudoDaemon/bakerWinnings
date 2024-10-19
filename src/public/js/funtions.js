@@ -130,5 +130,70 @@ function generarTabla(ingredientes) {
     });
 }
 
-// Ejecutar buscarProducto cuando la página se haya cargado completamente
+function editarProducto(idIngrediente) {
+    // Obtener los datos del producto a editar
+    fetch(`/links/api/productos/${idIngrediente}`)
+        .then(response => response.json())
+        .then(data => {
+            // Llenar el formulario de edición con los datos del producto
+            document.getElementById('edit_idIngrediente').value = data.idIngrediente;
+            document.getElementById('edit_nombre_ingrediente').value = data.nombre_ingrediente;
+            document.getElementById('edit_costo_ingrediente').value = data.costo_ingrediente;
+            // Mostrar el modal de edición
+            new bootstrap.Modal(document.getElementById('editProductModal')).show();
+        })
+        .catch(error => console.error('Error al obtener el producto:', error));
+}
+
+function eliminarProducto(idIngrediente) {
+    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+        fetch(`/links/eliminar/${idIngrediente}`, {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Producto eliminado exitosamente');
+                buscarProducto(); // Recargar la tabla de productos
+            } else {
+                alert('Error al eliminar el producto');
+            }
+        })
+        .catch(error => console.error('Error al eliminar el producto:', error));
+    }
+}
+
+function editarProducto(idIngrediente) {
+    // Obtener los datos del producto a editar
+    fetch(`/links/api/productos/${idIngrediente}`)
+        .then(response => response.json())
+        .then(data => {
+            // Llenar el formulario de edición con los datos del producto
+            document.getElementById('edit_idIngrediente').value = data.idIngrediente;
+            document.getElementById('edit_nombre_ingrediente').value = data.nombre_ingrediente;
+            document.getElementById('edit_costo_ingrediente').value = data.costo_ingrediente;
+            // Mostrar el modal de edición
+            new bootstrap.Modal(document.getElementById('editProductModal')).show();
+        })
+        .catch(error => console.error('Error al obtener el producto:', error));
+}
+
+function eliminarProducto(idIngrediente) {
+    if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
+        fetch(`/links/eliminar/${idIngrediente}`, {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Producto eliminado exitosamente');
+                buscarProducto(); // Recargar la tabla de productos
+            } else {
+                alert('Error al eliminar el producto');
+            }
+        })
+        .catch(error => console.error('Error al eliminar el producto:', error));
+    }
+}
+
+// Comienza la busqueda al abrir la ventana
 document.addEventListener('DOMContentLoaded', buscarProducto);
+document.getElementById('addProductForm').addEventListener('submit', insertarProducto);

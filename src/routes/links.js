@@ -376,24 +376,56 @@ router.get('/api/productos', async (req, res) => {
 });
 
 // Ruta para agregar un producto
-router.post('/agregar', async (req, res) => {
-    const { nombre_ingrediente, costo_ingrediente } = req.body;
-    await pool.query('INSERT INTO Ingredientes (nombre_ingrediente, costo_ingrediente) VALUES (?, ?)', [nombre_ingrediente, costo_ingrediente]);
-    res.redirect('/productos');
-});
+router.post('/productos', [
+    body('Nombre_producto').notEmpty().withMessage('Falta nombre del producto'),
+    body('Costo_producto').notEmpty().withMessage('Falta el costo del producto'),
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.render('links/productos', {
+            title: 'Productos',
+            errors: errors.array(),
+            data: req.body 
+        });
+    }
 
-// Ruta para editar un producto existente
-router.post('/editar', async (req, res) => {
-    const { idIngrediente, nombre_ingrediente, costo_ingrediente } = req.body;
-    await pool.query('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ? WHERE idIngrediente = ?', [nombre_ingrediente, costo_ingrediente, idIngrediente]);
-    res.redirect('/productos');
-});
+    // Si no hay errores, procede con la lógica de inserción de usuario
+    const { nombre_producto, costo_producto } = req.body;
 
-// Ruta para eliminar un producto
-router.post('/eliminar/:id', async (req, res) => {
-    const { id } = req.params;
-    await pool.query('DELETE FROM Ingredientes WHERE idIngrediente = ?', [id]);
-    res.redirect('/productos');
+    try {
+
+        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ?',
+            [nombre_producto, costo_producto]
+        );
+
+        if (existingProducto.length > 0) {
+            return res.render('links/productos', {
+                title: 'Productos',
+                errors: [{ msg: 'Se repiten los datos' }],
+                data: req.body
+            });
+        }
+
+        const prod = {
+            nombre_producto,
+            costo_producto
+        };
+        const productoResult = await queryAsync('INSERT INTO ingredientes SET ?', [prod]);
+        const idIng = productoResult.insertId;
+
+        res.render('links/productos', {
+            title: 'Insertar Usuarios',
+            success_msg: 'Usuario insertado correctamente',
+            error_msg: null
+        });
+    } catch (err) {
+        console.error(err);
+        res.render('links/productos', {
+            title: 'Agregar productos',
+            success_msg: null,
+            error_msg: 'Error al insertar producto'
+        });
+    }
 });
 
 

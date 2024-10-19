@@ -38,77 +38,74 @@
 <div class="container mt-5">
         <h2>Gestión de Productos (Ingredientes)</h2>
 
-        <!-- Botón para agregar un nuevo producto -->
-        <button type="button" class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addProductModal">
-            Agregar Producto
-        </button>
-
-        <!-- Tabla para mostrar los productos -->
-        <div class="container">
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Nombre del Producto</th>
-                        <th>Costo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-productos">
-                    <!-- Aquí se insertarán los productos dinámicamente con JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-<!-- Modal para agregar un producto -->
-<div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addProductModalLabel">Agregar Nuevo Producto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/productos/agregar" method="POST">
-                    <div class="mb-3">
-                        <label for="nombre_ingrediente" class="form-label">Nombre del Producto</label>
-                        <input type="text" class="form-control" id="nombre_ingrediente" name="nombre_ingrediente" required>
+        <div class="row">
+            <!-- Columna para el formulario -->
+            <div class="col-md-6">
+                
+                {{#if errors}}
+                    <ul>
+                        {{#each errors}}
+                            <li>{{this.msg}}</li>
+                        {{/each}}
+                    </ul>
+                {{/if}}
+                {{#if success_msg}}
+                    <p>{{success_msg}}</p>
+                {{/if}}
+                <form action="/productos" method="POST">
+                    <div class="form-group">
+                        <label for="nombre_ingrediente">Nombre del Ingrediente:</label>
+                        <input type="text" class="form-control" id="nombre_ingrediente" name="nombre_ingrediente" value="{{data.nombre_ingrediente}}">
                     </div>
-                    <div class="mb-3">
-                        <label for="costo_ingrediente" class="form-label">Costo del Producto</label>
-                        <input type="number" class="form-control" id="costo_ingrediente" name="costo_ingrediente" step="0.01" required>
+                    <div class="form-group">
+                        <label for="costo_ingrediente">Costo del Ingrediente:</label>
+                        <input type="text" class="form-control" id="costo_ingrediente" name="costo_ingrediente" value="{{data.costo_ingrediente}}">
                     </div>
-                    <button type="submit" class="btn btn-primary">Guardar</button>
+                    <button type="submit" class="btn btn-primary mt-3">Añadir Ingrediente</button>
                 </form>
             </div>
-        </div>
-    </div>
-</div>
 
-<!-- Modal para editar un producto -->
-<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editProductModalLabel">Editar Producto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form action="/productos/editar" method="POST">
-                    <input type="hidden" id="edit_idIngrediente" name="idIngrediente">
-                    <div class="mb-3">
-                        <label for="edit_nombre_ingrediente" class="form-label">Nombre del Producto</label>
-                        <input type="text" class="form-control" id="edit_nombre_ingrediente" name="nombre_ingrediente" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="edit_costo_ingrediente" class="form-label">Costo del Producto</label>
-                        <input type="number" class="form-control" id="edit_costo_ingrediente" name="costo_ingrediente" step="0.01" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
-                </form>
+            <!-- Columna para la tabla -->
+            <div class="col-md-6">
+                <h3>Lista de Productos</h3>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre del Producto</th>
+                            <th>Costo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-productos"></tbody>
+                </table>
             </div>
         </div>
     </div>
-</div>
 
+    <!-- Modal para editar un producto -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editProductModalLabel">Editar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/links/editar" method="POST">
+                        <input type="hidden" id="edit_idIngrediente" name="idIngrediente">
+                        <div class="mb-3">
+                            <label for="edit_nombre_ingrediente" class="form-label">Nombre del Producto</label>
+                            <input type="text" class="form-control" id="edit_nombre_ingrediente" name="nombre_ingrediente" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_costo_ingrediente" class="form-label">Costo del Producto</label>
+                            <input type="number" class="form-control" id="edit_costo_ingrediente" name="costo_ingrediente" step="0.01" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
 <script src="/js/funtions.js"></script>
