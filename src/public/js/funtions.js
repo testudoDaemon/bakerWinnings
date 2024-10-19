@@ -111,30 +111,33 @@ async function buscarProducto() {
     }
 }
 
-function generarTabla(ingredientes) {
-    const tabla = document.getElementById('tabla-productos');
-    tabla.innerHTML = ''; // Limpiar la tabla antes de agregar nuevos datos
+function generarTabla(productos) {
+    const tablaProductos = document.getElementById('tabla-productos');
+    tablaProductos.innerHTML = '';
 
-    ingredientes.forEach(ingrediente => {
+    productos.forEach(producto => {
         const fila = document.createElement('tr');
+
         fila.innerHTML = `
-            <td>${ingrediente.nombre_ingrediente}</td>
-            <td>${ingrediente.costo_ingrediente}</td>
-            <td>
-                <button class="btn btn-primary btn-sm" onclick="mostrarFormularioEditar(${ingrediente.id_ingrediente}, '${ingrediente.nombre_ingrediente}', ${ingrediente.costo_ingrediente})">Editar</button>
-                <button class="btn btn-danger btn-sm" onclick="confirmarEliminar(${ingrediente.id_ingrediente})">Eliminar</button>
-            </td>
+            <td>${producto.nombre_ingrediente}</td>
+            <td>${producto.costo_ingrediente}</td>
+            <td><button class="btn btn-info">Seleccionar</button></td>
         `;
-        tabla.appendChild(fila);
+
+        // Cuando se hace clic en la fila, llena los campos del formulario de actualización y eliminación
+        fila.querySelector('.btn-info').addEventListener('click', () => {
+            // Para actualizar
+            document.getElementById('idIngrediente').value = producto.id_ingrediente;
+            document.getElementById('nombre_ingrediente').value = producto.nombre_ingrediente;
+            document.getElementById('costo_ingrediente').value = producto.costo_ingrediente;
+
+            // Para eliminar
+            document.getElementById('nombre_ingrediente_eliminar').value = producto.nombre_ingrediente;
+        });
+
+        tablaProductos.appendChild(fila);
     });
 }
-
-
-// Comienza la busqueda al abrir la ventana
-document.addEventListener('DOMContentLoaded', buscarProducto);
-document.getElementById('addProductForm').addEventListener('submit', insertarProducto);
-
-
 
 async function editarProducto(event) {
     event.preventDefault();
@@ -163,7 +166,7 @@ async function editarProducto(event) {
 
 async function eliminarProducto(event) {
     event.preventDefault();
-    const idIngrediente = document.getElementById('idIngrediente').value;
+    const nombreIngrediente = document.getElementById('nombre_ingrediente_eliminar').value;
 
     try {
         const response = await fetch('/links/eliminar-producto', {
@@ -171,7 +174,7 @@ async function eliminarProducto(event) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id_ingrediente: idIngrediente })
+            body: JSON.stringify({ nombre_ingrediente: nombreIngrediente })
         });
 
         if (!response.ok) {
@@ -183,4 +186,7 @@ async function eliminarProducto(event) {
         alert('Error al eliminar el producto');
     }
 }
+// Comienza la busqueda al abrir la ventana
+document.addEventListener('DOMContentLoaded', buscarProducto);
+document.getElementById('addProductForm').addEventListener('submit', insertarProducto);
 

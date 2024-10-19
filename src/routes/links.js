@@ -477,9 +477,9 @@ router.post('/actualizar-producto', [
     }
 });
 
-// Ruta para eliminar un producto
+// Ruta para eliminar un producto por nombre
 router.post('/eliminar-producto', [
-    body('id_ingrediente').notEmpty().withMessage('Falta el ID del producto')
+    body('nombre_ingrediente').notEmpty().withMessage('Falta el nombre del producto')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -490,11 +490,10 @@ router.post('/eliminar-producto', [
         });
     }
 
-    // Si no hay errores, procede con la lógica de eliminación de producto
-    const { id_ingrediente } = req.body;
+    const { nombre_ingrediente } = req.body;
 
     try {
-        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE id_ingrediente = ?', [id_ingrediente]);
+        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
 
         if (existingProducto.length === 0) {
             return res.render('links/productos', {
@@ -504,7 +503,7 @@ router.post('/eliminar-producto', [
             });
         }
 
-        await poolQuery('DELETE FROM ingredientes WHERE id_ingrediente = ?', [id_ingrediente]);
+        await poolQuery('DELETE FROM ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
 
         res.render('links/productos', {
             title: 'Productos',
