@@ -370,7 +370,7 @@ router.get('/productos', (req, res) => {
 // Nueva ruta para obtener los datos de los ingredientes
 router.get('/api/productos', async (req, res) => {
     try {
-        const ingredientes = await pool.query('SELECT * FROM ingredientes');
+        const ingredientes = await pool.query('SELECT * FROM Ingredientes');
         res.json(ingredientes);
     } catch (error) {
         console.error('Error al obtener los ingredientes: ', error);
@@ -399,12 +399,14 @@ router.post('/productos', [
 
     try {
 
-        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ?',
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ?',
             [nombre_ingrediente, costo_ingrediente]
         );
 
         if (existingProducto.length > 0) {
             return res.render('links/productos', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
                 title: 'Productos',
                 errors: [{ msg: 'Se repiten los datos' }],
                 data: req.body
@@ -415,10 +417,12 @@ router.post('/productos', [
             nombre_ingrediente,
             costo_ingrediente
         };
-        const productoResult = await queryAsync('INSERT INTO ingredientes SET ?', [prod]);
+        const productoResult = await queryAsync('INSERT INTO Ingredientes SET ?', [prod]);
         const idIng = productoResult.insertId;
 
         res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Insertar Usuarios',
             success_msg: 'Ingrediente insertado correctamente',
             error_msg: null
@@ -426,6 +430,8 @@ router.post('/productos', [
     } catch (err) {
         console.error(err);
         res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Agregar productos',
             success_msg: null,
             error_msg: 'Error al insertar producto'
@@ -453,7 +459,7 @@ router.post('/actualizar-producto', [
     const { idIngrediente, nombre_ingrediente, costo_ingrediente } = req.body;
 
     try {
-        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND idIngrediente != ?',
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND idIngrediente != ?',
             [nombre_ingrediente, costo_ingrediente, idIngrediente]
         );
 
@@ -467,7 +473,7 @@ router.post('/actualizar-producto', [
             });
         }
 
-        await poolQuery('UPDATE ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ? WHERE idIngrediente = ?',
+        await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ? WHERE idIngrediente = ?',
             [nombre_ingrediente, costo_ingrediente, idIngrediente]
         );
 
@@ -506,7 +512,7 @@ router.post('/eliminar-producto', [
     const { nombre_ingrediente } = req.body;
 
     try {
-        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
 
         if (existingProducto.length === 0) {
             return res.render('links/productos', {
@@ -516,7 +522,7 @@ router.post('/eliminar-producto', [
             });
         }
 
-        await poolQuery('DELETE FROM ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
+        await poolQuery('DELETE FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
 
         res.render('links/productos', {
             title: 'Productos',
@@ -535,6 +541,8 @@ router.post('/eliminar-producto', [
 
 router.get('/produccion', (req, res) => {
     res.render('links/produccion', {
+        layout: 'main_menu',
+        stylesheets: ['/css/shome.css'],
         title: 'Produccion',
         errors: [],
         data: {}

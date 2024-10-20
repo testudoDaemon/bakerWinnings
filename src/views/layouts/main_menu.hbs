@@ -36,13 +36,17 @@
                     <span>Don Julio</span>
                 </a>
             </header>
-            <nav class="dashboard-nav-list"><a href="/src/html/home.html" class="dashboard-nav-item"><i
-                        class="fas fa-home"></i>
-                    Inicio </a><a href="/src/html/produccion.html" class="dashboard-nav-item active"><i
+            <nav class="dashboard-nav-list">
+                <a href="#" class="dashboard-nav-item" id="nav-home">
+                <i class="fas fa-home"></i>
+                    Inicio </a>
+                <a href="#" class="dashboard-nav-item active" id="nav-produccion"><i
                         class="fas fa-tachometer-alt"></i> Producción
-                </a><a href="#" class="dashboard-nav-item"><i class="fas fa-file-upload"></i> Ventas </a>
-                <div class='dashboard-nav-dropdown'><a href="#!"
-                        class="dashboard-nav-item dashboard-nav-dropdown-toggle"><i class="fas fa-photo-video"></i>
+                </a>
+                <a href="#" class="dashboard-nav-item" id="nav-ventas"><i class="fas fa-file-upload"></i> Ventas </a>
+                <div class='dashboard-nav-dropdown'>
+                    <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                        <i class="fas fa-photo-video"></i>
                         Pedidos </a>
                     <div class='dashboard-nav-dropdown-menu'><a href="#" class="dashboard-nav-dropdown-item">All</a><a
                             href="#" class="dashboard-nav-dropdown-item">Recent</a><a href="#"
@@ -96,6 +100,7 @@
         crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="/js/movMenu.js"></script>
+    <script src="/js/routes.js"></script>
 </body>
 
 </html>
