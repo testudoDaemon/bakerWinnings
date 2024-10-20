@@ -12,6 +12,7 @@ const poolQuery = util.promisify(pool.query).bind(pool);
 
 router.get('/home', (req, res) => {
     res.render('links/home', {
+        layout: 'main_menu',
         title: 'Home',
         stylesheets: ['/css/shome.css']
     }
@@ -358,6 +359,8 @@ router.post('/eliminar-usuario', [
 
 router.get('/productos', (req, res) => {
     res.render('links/productos', {
+        layout: 'main_menu',
+        stylesheets: ['/css/shome.css'],
         title: 'Productos',
         errors: [],
         data: {}
@@ -377,12 +380,14 @@ router.get('/api/productos', async (req, res) => {
 
 // Ruta para agregar un producto
 router.post('/productos', [
-    body('Nombre_producto').notEmpty().withMessage('Falta nombre del producto'),
-    body('Costo_producto').notEmpty().withMessage('Falta el costo del producto'),
+    body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
+    body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             errors: errors.array(),
             data: req.body 
@@ -390,12 +395,12 @@ router.post('/productos', [
     }
 
     // Si no hay errores, procede con la lógica de inserción de usuario
-    const { nombre_producto, costo_producto } = req.body;
+    const { nombre_ingrediente, costo_ingrediente } = req.body;
 
     try {
 
         const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ?',
-            [nombre_producto, costo_producto]
+            [nombre_ingrediente, costo_ingrediente]
         );
 
         if (existingProducto.length > 0) {
@@ -407,15 +412,15 @@ router.post('/productos', [
         }
 
         const prod = {
-            nombre_producto,
-            costo_producto
+            nombre_ingrediente,
+            costo_ingrediente
         };
         const productoResult = await queryAsync('INSERT INTO ingredientes SET ?', [prod]);
         const idIng = productoResult.insertId;
 
         res.render('links/productos', {
             title: 'Insertar Usuarios',
-            success_msg: 'Usuario insertado correctamente',
+            success_msg: 'Ingrediente insertado correctamente',
             error_msg: null
         });
     } catch (err) {
@@ -430,12 +435,14 @@ router.post('/productos', [
 
 // Ruta para actualizar un producto
 router.post('/actualizar-producto', [
-    body('nombre_producto').notEmpty().withMessage('Falta nombre del producto'),
-    body('costo_producto').notEmpty().withMessage('Falta el costo del producto'),
+    body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
+    body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             errors: errors.array(),
             data: req.body 
@@ -443,26 +450,30 @@ router.post('/actualizar-producto', [
     }
 
     // Si no hay errores, procede con la lógica de actualización de producto
-    const { id_ingrediente, nombre_producto, costo_producto } = req.body;
+    const { idIngrediente, nombre_ingrediente, costo_ingrediente } = req.body;
 
     try {
-        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND id_ingrediente != ?',
-            [nombre_producto, costo_producto, id_ingrediente]
+        const existingProducto = await poolQuery('SELECT * FROM ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND idIngrediente != ?',
+            [nombre_ingrediente, costo_ingrediente, idIngrediente]
         );
 
         if (existingProducto.length > 0) {
             return res.render('links/productos', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
                 title: 'Productos',
                 errors: [{ msg: 'Se repiten los datos' }],
                 data: req.body
             });
         }
 
-        await poolQuery('UPDATE ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ? WHERE id_ingrediente = ?',
-            [nombre_producto, costo_producto, id_ingrediente]
+        await poolQuery('UPDATE ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ? WHERE idIngrediente = ?',
+            [nombre_ingrediente, costo_ingrediente, idIngrediente]
         );
 
         res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             success_msg: 'Producto actualizado correctamente',
             error_msg: null
@@ -470,6 +481,8 @@ router.post('/actualizar-producto', [
     } catch (err) {
         console.error(err);
         res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             success_msg: null,
             error_msg: 'Error al actualizar producto'
@@ -530,6 +543,8 @@ router.get('/produccion', (req, res) => {
 
 router.get('/ventas', (req, res) => {
     res.render('links/ventas', {
+        layout: 'main_menu',
+        stylesheets: ['/css/shome.css'],
         title: 'Ventas',
         errors: [],
         data: {}
