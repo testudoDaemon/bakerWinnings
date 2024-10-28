@@ -396,12 +396,13 @@ router.post('/productos', [
     }
 
     // Si no hay errores, procede con la lógica de inserción de usuario
-    const { nombre_ingrediente, costo_ingrediente, cantidad_ingrediente } = req.body;
+    let { nombre_ingrediente, costo_ingrediente, cantidad_ingrediente } = req.body;
+    nombre_ingrediente = nombre_ingrediente.toLowerCase();
 
     try {
-
-        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ?',
-            [nombre_ingrediente, costo_ingrediente]
+        const existingProducto = await poolQuery(
+            'SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ?',
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente]
         );
 
         if (existingProducto.length > 0) {
@@ -419,13 +420,15 @@ router.post('/productos', [
             costo_ingrediente,
             cantidad_ingrediente
         };
-        const productoResult = await queryAsync('INSERT INTO Ingredientes SET ?', [prod]);
+        const productoResult = await queryAsync(
+            'INSERT INTO Ingredientes (nombre_ingrediente, costo_ingrediente, cantidad_ingrediente) VALUES ((?), ?, ?)', 
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente]);
         const idIng = productoResult.insertId;
 
         res.render('links/productos', {
             layout: 'main_menu',
             stylesheets: ['/css/shome.css'],
-            title: 'Insertar Usuarios',
+            title: 'Insertar Ingredientes',
             success_msg: 'Ingrediente insertado correctamente',
             error_msg: null
         });
@@ -445,6 +448,7 @@ router.post('/productos', [
 router.post('/actualizar-producto', [
     body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
     body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -458,11 +462,13 @@ router.post('/actualizar-producto', [
     }
 
     // Si no hay errores, procede con la lógica de actualización de producto
-    const { idIngrediente, nombre_ingrediente, costo_ingrediente } = req.body;
-
+    let {idIngrediente, nombre_ingrediente, costo_ingrediente, cantidad_ingrediente } = req.body;
+    nombre_ingrediente = nombre_ingrediente.toLowerCase();
+    
     try {
-        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND idIngrediente != ?',
-            [nombre_ingrediente, costo_ingrediente, idIngrediente]
+        const existingProducto = await poolQuery(
+            'SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND idIngrediente != ?',
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, idIngrediente]
         );
 
         if (existingProducto.length > 0) {
@@ -475,8 +481,9 @@ router.post('/actualizar-producto', [
             });
         }
 
-        await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ? WHERE idIngrediente = ?',
-            [nombre_ingrediente, costo_ingrediente, idIngrediente]
+        await poolQuery(
+            'UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ? WHERE idIngrediente = ?',
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, idIngrediente]
         );
 
         res.render('links/productos', {
@@ -514,7 +521,7 @@ router.post('/eliminar-producto', [
     const { nombre_ingrediente } = req.body;
 
     try {
-        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ?', [nombre_ingrediente]);
 
         if (existingProducto.length === 0) {
             return res.render('links/productos', {
@@ -524,7 +531,7 @@ router.post('/eliminar-producto', [
             });
         }
 
-        await poolQuery('DELETE FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
+        await poolQuery('DELETE FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ?', [nombre_ingrediente]);
 
         res.render('links/productos', {
             title: 'Productos',
