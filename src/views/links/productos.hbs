@@ -4,8 +4,6 @@
         <!-- Columna de la izquierda para las pestañas y formularios -->
         <div class="col-md-6">
 
-            <div id="instant-message" class="alert" style="display: none;"></div>
-
             {{#if errors}}
             <div id="message" class="alert alert-danger">
                 <ul>
@@ -36,6 +34,18 @@
 
             <!-- Elemento para mostrar mensajes de validación instantánea -->
             <div id="instant-message" class="alert alert-danger" style="display: none;"></div>
+            <div id="nombre-warning" class="alert alert-warning" style="display: none;">
+                    Has alcanzado el límite de 15 caracteres.
+            </div>
+            <div id="costo-warning" class="alert alert-warning" style="display: none;">
+                    Has alcanzado el límite de 4 caracteres.
+            </div>
+            <div id="nombre-actualizar-warning" class="alert alert-warning" style="display: none;">
+                    Has alcanzado el límite de 15 caracteres.
+            </div>
+            <div id="costo-actualizar-warning" class="alert alert-warning" style="display: none;">
+                    Has alcanzado el límite de 4 caracteres.
+            </div>
 
             <h2>Gestión de Productos (Ingredientes)</h2>
 
@@ -54,7 +64,7 @@
                         type="button" role="tab" aria-controls="eliminar" aria-selected="false">Eliminar</button>
                 </li>
             </ul>
-
+            
             <!-- Contenido de las pestañas -->
             <div class="tab-content" id="productoTabsContent">
                 <!-- Formulario de ingresar -->
@@ -62,11 +72,15 @@
                     <form action="/links/productos" method="POST" class="mt-3">
                         <div class="form-group">
                             <label for="nombre_ingrediente">Nombre del Ingrediente:</label>
-                            <input type="text" class="form-control" id="nombre_ingrediente" name="nombre_ingrediente">
+                            <input type="text" class="form-control" id="nombre_ingrediente" name="nombre_ingrediente" maxlength="15" minlength="3">
                         </div>
                         <div class="form-group">
                             <label for="costo_ingrediente">Costo del Ingrediente:</label>
-                            <input type="text" class="form-control" id="costo_ingrediente" name="costo_ingrediente">
+                            <input type="text" class="form-control" id="costo_ingrediente" name="costo_ingrediente" maxlength="4" minlength="2">
+                        </div>
+                        <div class="form-group">
+                            <label for="cantidad_ingrediente">Cantidad del Ingrediente:</label>
+                            <input type="text" class="form-control" id="cantidad_ingrediente" name="cantidad_ingrediente" maxlength="4" minlength="2">
                         </div>
                         <button type="submit" class="btn btn-primary mt-3">Añadir Ingrediente</button>
                     </form>
@@ -79,12 +93,16 @@
                         <div class="form-group">
                             <label for="nombre_ingrediente_actualizar">Nombre del Ingrediente</label>
                             <input type="text" class="form-control" id="nombre_ingrediente_actualizar"
-                                name="nombre_ingrediente">
+                                name="nombre_ingrediente_actualizar" maxlength="15" minlength="3">
                         </div>
                         <div class="form-group">
                             <label for="costo_ingrediente_actualizar">Costo del Producto</label>
                             <input type="text" class="form-control" id="costo_ingrediente_actualizar"
-                                name="costo_ingrediente">
+                                name="costo_ingrediente" maxlength="4" minlength="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="cantidad_ingrediente_actualizar">Cantidad del Ingrediente:</label>
+                            <input type="text" class="form-control" id="cantidad_ingrediente_actualizar" name="costo_ingrediente_actualizar" maxlength="4" minlength="2">
                         </div>
                         <button type="submit" class="btn btn-primary mt-3">Guardar Cambios</button>
                     </form>
@@ -114,6 +132,7 @@
                     <tr>
                         <th>Nombre del Producto</th>
                         <th>Costo</th>
+                        <th>Cantidad</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
@@ -124,4 +143,5 @@
 </div>
 
 <!-- Incluye el script de funciones -->
+<script src="/js/validadorP.js"></script>
 <script src="/js/funtions.js"></script>

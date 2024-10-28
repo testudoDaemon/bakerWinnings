@@ -382,6 +382,7 @@ router.get('/api/productos', async (req, res) => {
 router.post('/productos', [
     body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
     body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -395,7 +396,7 @@ router.post('/productos', [
     }
 
     // Si no hay errores, procede con la lógica de inserción de usuario
-    const { nombre_ingrediente, costo_ingrediente } = req.body;
+    const { nombre_ingrediente, costo_ingrediente, cantidad_ingrediente } = req.body;
 
     try {
 
@@ -415,7 +416,8 @@ router.post('/productos', [
 
         const prod = {
             nombre_ingrediente,
-            costo_ingrediente
+            costo_ingrediente,
+            cantidad_ingrediente
         };
         const productoResult = await queryAsync('INSERT INTO Ingredientes SET ?', [prod]);
         const idIng = productoResult.insertId;

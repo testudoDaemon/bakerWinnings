@@ -29,6 +29,7 @@ function generarTabla(productos) {
         fila.innerHTML = `
             <td>${producto.nombre_ingrediente}</td>
             <td>${producto.costo_ingrediente}</td>
+            <td>${producto.cantidad_ingrediente}</td>
             <td><button class="btn btn-info">Seleccionar</button></td>
         `;
 
@@ -37,6 +38,8 @@ function generarTabla(productos) {
             document.getElementById('idIngredienteActualizar').value = producto.idIngrediente;
             document.getElementById('nombre_ingrediente_actualizar').value = producto.nombre_ingrediente;
             document.getElementById('costo_ingrediente_actualizar').value = producto.costo_ingrediente;
+            document.getElementById('cantidad_ingrediente_actualizar').value = producto.cantidad_ingrediente;
+            
 
             // Para eliminar
             document.getElementById('nombre_ingrediente_eliminar').value = producto.nombre_ingrediente;
@@ -52,6 +55,7 @@ async function editarProducto(event) {
     const idIngrediente = document.getElementById('idIngrediente').value; 
     const nombre_producto = document.getElementById('nombre_ingrediente').value;
     const costo_producto = document.getElementById('costo_ingrediente').value;
+    const cantidad_producto = document.getElementById('cantidad_ingrediente').value;
 
     try {
         const response = await fetch('/links/actualizar-producto', {
