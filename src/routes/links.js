@@ -458,7 +458,7 @@ router.post('/actualizar-producto', [
     }
 
     // Si no hay errores, procede con la lógica de actualización de producto
-    const { idIngrediente, nombre_ingrediente, costo_ingrediente } = req.body;
+    const { idIngrediente, nombre_ingrediente, costo_ingrediente, cantidad_ingrediente } = req.body;
 
     try {
         const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND idIngrediente != ?',
@@ -475,9 +475,12 @@ router.post('/actualizar-producto', [
             });
         }
 
-        await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ? WHERE idIngrediente = ?',
-            [nombre_ingrediente, costo_ingrediente, idIngrediente]
+
+        const ola = await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ? WHERE idIngrediente = ?',
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, idIngrediente]
         );
+        
+        console.log(ola);
 
         res.render('links/productos', {
             layout: 'main_menu',
