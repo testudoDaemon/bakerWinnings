@@ -371,6 +371,7 @@ router.get('/productos', (req, res) => {
 router.get('/api/productos', async (req, res) => {
     try {
         const ingredientes = await pool.query('SELECT * FROM Ingredientes');
+        console.log('Ingredientes:', ingredientes);
         res.json(ingredientes);
     } catch (error) {
         console.error('Error al obtener los ingredientes: ', error);
@@ -382,7 +383,8 @@ router.get('/api/productos', async (req, res) => {
 router.post('/productos', [
     body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
     body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
-    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto')
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto'),
+    body('tipo_cantidad').notEmpty().withMessage('Falta el tipo de cantidad')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -396,12 +398,12 @@ router.post('/productos', [
     }
 
     // Si no hay errores, procede con la lógica de inserción de usuario
-    const { nombre_ingrediente, costo_ingrediente, cantidad_ingrediente } = req.body;
+    const { nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad } = req.body;
 
     try {
 
-        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ?',
-            [nombre_ingrediente, costo_ingrediente]
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ?',
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad]
         );
 
         if (existingProducto.length > 0) {
@@ -417,7 +419,8 @@ router.post('/productos', [
         const prod = {
             nombre_ingrediente,
             costo_ingrediente,
-            cantidad_ingrediente
+            cantidad_ingrediente,
+            tipo_cantidad
         };
         const productoResult = await queryAsync('INSERT INTO Ingredientes SET ?', [prod]);
         const idIng = productoResult.insertId;
@@ -442,9 +445,12 @@ router.post('/productos', [
 });
 
 // Ruta para actualizar un producto
+// Ruta para actualizar un producto
 router.post('/actualizar-producto', [
     body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
     body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto'),
+    body('tipo_cantidad').notEmpty().withMessage('Falta el tipo de cantidad')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -458,11 +464,11 @@ router.post('/actualizar-producto', [
     }
 
     // Si no hay errores, procede con la lógica de actualización de producto
-    const { idIngrediente, nombre_ingrediente, costo_ingrediente, cantidad_ingrediente } = req.body;
+    const { idIngrediente, nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad } = req.body;
 
     try {
-        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND idIngrediente != ?',
-            [nombre_ingrediente, costo_ingrediente, idIngrediente]
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ? AND idIngrediente != ?',
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
         );
 
         if (existingProducto.length > 0) {
@@ -475,12 +481,9 @@ router.post('/actualizar-producto', [
             });
         }
 
-
-        const ola = await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ? WHERE idIngrediente = ?',
-            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, idIngrediente]
+        await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ?, tipo_cantidad = ? WHERE idIngrediente = ?',
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
         );
-        
-        console.log(ola);
 
         res.render('links/productos', {
             layout: 'main_menu',

@@ -9,4 +9,4 @@ module.exports = {
         queueLimit: 0,
         reconect: true
     }
-}
+} 
