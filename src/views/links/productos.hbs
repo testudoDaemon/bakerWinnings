@@ -88,7 +88,11 @@
                                 <input type="text" class="form-control" id="cantidad_ingrediente" name="cantidad_ingrediente" maxlength="4" minlength="2">
                             </div>
                             <div class="col-sm-4">
+<<<<<<< HEAD
                                 <select class="form-control" id="tipoIngrediente" name="tipoIngrediente">
+=======
+                                <select class="form-control" id="tipo_cantidad" name="tipo_cantidad">
+>>>>>>> brandonDev
                                     <option value="piezas">Piezas</option>
                                     <option value="kg">Kg</option>
                                     <option value="lts">Lts</option>
@@ -97,7 +101,11 @@
                         </div>
                         <div class="form-group row justify-content-center">
                             <div class="col-sm-6 text-center">
+<<<<<<< HEAD
                                 <button type="submit" class="btn btn-primary mt-3">Añadir ingrediente</button>
+=======
+                                <button type="submit" class="btn btn-primary mt-3">Añadir Ingrediente</button>
+>>>>>>> brandonDev
                             </div>
                         </div>
                     </form>
@@ -105,27 +113,42 @@
 
                                 <!-- Formulario de actualizar -->
                 <div class="tab-pane fade" id="actualizar" role="tabpanel" aria-labelledby="actualizar-tab">
-                    <form action="/links/actualizar-producto" method="POST" class="mt-3">
+                    <form id="updateProductForm" method="POST" action="/links/actualizar-producto" class="mt-3">
                         <input type="hidden" id="idIngredienteActualizar" name="idIngrediente">
                         <div class="form-group row justify-content-center">
                             <label for="nombre_ingrediente_actualizar" class="col-sm-2 col-form-label text-right">Nombre del Ingrediente:</label>
                             <div class="col-sm-8">
+<<<<<<< HEAD
                                 <input type="text" class="form-control" id="nombre_ingrediente_actualizar" name="nombre_ingrediente_actualizar" maxlength="15" minlength="3">
+=======
+                                <input type="text" class="form-control" id="nombre_ingrediente_actualizar" name="nombre_ingrediente" maxlength="15" minlength="3">
+>>>>>>> brandonDev
                             </div>
                         </div>
                         <div class="form-group row justify-content-center">
                             <label for="costo_ingrediente_actualizar" class="col-sm-2 col-form-label text-right">Costo del Ingrediente:</label>
                             <div class="col-sm-8">
+<<<<<<< HEAD
                                 <input type="text" class="form-control" id="costo_ingrediente_actualizar" name="costo_ingrediente_actualizar" maxlength="4" minlength="2">
+=======
+                                <input type="text" class="form-control" id="costo_ingrediente_actualizar" name="costo_ingrediente" maxlength="4" minlength="2">
+>>>>>>> brandonDev
                             </div>
                         </div>
                         <div class="form-group row justify-content-center">
                             <label for="cantidad_ingrediente_actualizar" class="col-sm-2 col-form-label text-right">Cantidad del Ingrediente:</label>
                             <div class="col-sm-4">
+<<<<<<< HEAD
                                 <input type="text" class="form-control" id="cantidad_ingrediente_actualizar" name="cantidad_ingrediente_actualizar" maxlength="4" minlength="2">
                             </div>
                             <div class="col-sm-4">
                                 <select class="form-control" id="tipoIngrediente_actualizar" name="tipoIngrediente_actualizar">
+=======
+                                <input type="text" class="form-control" id="cantidad_ingrediente_actualizar" name="cantidad_ingrediente" maxlength="4" minlength="2">
+                            </div>
+                            <div class="col-sm-4">
+                                <select class="form-control" id="tipo_cantidad_actualizar" name="tipo_cantidad">
+>>>>>>> brandonDev
                                     <option value="piezas">Piezas</option>
                                     <option value="kg">Kg</option>
                                     <option value="lts">Lts</option>
@@ -134,7 +157,11 @@
                         </div>
                         <div class="form-group row justify-content-center">
                             <div class="col-sm-6 text-center">
+<<<<<<< HEAD
                                 <button type="submit" class="btn btn-primary mt-3">Actualizar ingrediente</button>
+=======
+                                <button type="submit" class="btn btn-primary mt-3">Actualizar Ingrediente</button>
+>>>>>>> brandonDev
                             </div>
                         </div>
                     </form>
@@ -143,11 +170,11 @@
 
                 <!-- Formulario de eliminar -->
                 <div class="tab-pane fade" id="eliminar" role="tabpanel" aria-labelledby="eliminar-tab">
-                    <form id="formEliminarProducto" onsubmit="eliminarProducto(event)" class="mt-3">
+                    <form id="formEliminarProducto" method="POST" action="/links/eliminar-producto" class="mt-3">
                         <div class="form-group">
-                            <label for="nombre_ingrediente_eliminar">Nombre del Producto</label>
-                            <input type="text" class="form-control" id="nombre_ingrediente_eliminar"
-                                name="nombre_ingrediente" readonly>
+                        <label for="nombre_ingrediente_eliminar">Nombre del Producto</label>
+                        <input type="text" class="form-control" id="nombre_ingrediente_eliminar" 
+                            name="nombre_ingrediente_eliminar" readonly>
                         </div>
                         <button type="submit" class="btn btn-danger mt-3">Eliminar producto</button>
                     </form>
@@ -165,6 +192,7 @@
                         <th>Nombre del Producto</th>
                         <th>Costo</th>
                         <th>Cantidad</th>
+                        <th>Tipo</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>

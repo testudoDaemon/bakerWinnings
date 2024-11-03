@@ -30,6 +30,7 @@ function generarTabla(productos) {
             <td>${producto.nombre_ingrediente}</td>
             <td>${producto.costo_ingrediente}</td>
             <td>${producto.cantidad_ingrediente}</td>
+            <td>${producto.tipo_cantidad}</td>
             <td><button class="btn btn-info">Seleccionar</button></td>
         `;
 
@@ -39,6 +40,7 @@ function generarTabla(productos) {
             document.getElementById('nombre_ingrediente_actualizar').value = producto.nombre_ingrediente;
             document.getElementById('costo_ingrediente_actualizar').value = producto.costo_ingrediente;
             document.getElementById('cantidad_ingrediente_actualizar').value = producto.cantidad_ingrediente;
+            document.getElementById('tipo_cantidad_actualizar').value = producto.tipo_cantidad;
             
 
             // Para eliminar
@@ -52,10 +54,11 @@ function generarTabla(productos) {
 
 async function editarProducto(event) {
     event.preventDefault();
-    const idIngrediente = document.getElementById('idIngrediente').value; 
-    const nombre_producto = document.getElementById('nombre_ingrediente').value;
-    const costo_producto = document.getElementById('costo_ingrediente').value;
-    const cantidad_producto = document.getElementById('cantidad_ingrediente').value;
+    const idIngrediente = document.getElementById('idIngredienteActualizar').value; 
+    const nombre_producto = document.getElementById('nombre_ingrediente_actualizar').value;
+    const costo_producto = document.getElementById('costo_ingrediente_actualizar').value;
+    const cantidad_producto = document.getElementById('cantidad_ingrediente_actualizar').value;
+    const tipo_cantidad = document.getElementById('tipo_cantidad_actualizar').value;
 
     try {
         const response = await fetch('/links/actualizar-producto', {
@@ -63,7 +66,7 @@ async function editarProducto(event) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ id_ingrediente: idIngrediente, nombre_producto, costo_producto })
+            body: JSON.stringify({ id_ingrediente: idIngrediente, nombre_producto, costo_producto, cantidad_producto, tipo_cantidad })
         });
 
         if (!response.ok) {
@@ -86,7 +89,7 @@ async function eliminarProducto(event) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ nombre_ingrediente: nombreIngrediente })
+            body: JSON.stringify({ nombre_ingrediente_eliminar: nombreIngrediente })
         });
 
         if (!response.ok) {

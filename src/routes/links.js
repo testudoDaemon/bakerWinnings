@@ -371,6 +371,7 @@ router.get('/productos', (req, res) => {
 router.get('/api/productos', async (req, res) => {
     try {
         const ingredientes = await pool.query('SELECT * FROM Ingredientes');
+        console.log('Ingredientes:', ingredientes);
         res.json(ingredientes);
     } catch (error) {
         console.error('Error al obtener los ingredientes: ', error);
@@ -382,7 +383,8 @@ router.get('/api/productos', async (req, res) => {
 router.post('/productos', [
     body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
     body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
-    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto')
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto'),
+    body('tipo_cantidad').notEmpty().withMessage('Falta el tipo de cantidad')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -396,6 +398,7 @@ router.post('/productos', [
     }
 
     // Si no hay errores, procede con la lógica de inserción de usuario
+<<<<<<< HEAD
     let { nombre_ingrediente, costo_ingrediente, cantidad_ingrediente } = req.body;
     nombre_ingrediente = nombre_ingrediente.toLowerCase();
 
@@ -403,6 +406,14 @@ router.post('/productos', [
         const existingProducto = await poolQuery(
             'SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ?',
             [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente]
+=======
+    const { nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad } = req.body;
+
+    try {
+
+        const existingProducto = await poolQuery('SELECT nombre_ingrediente FROM Ingredientes WHERE nombre_ingrediente = ?',
+            [nombre_ingrediente]
+>>>>>>> brandonDev
         );
 
         if (existingProducto.length > 0) {
@@ -418,7 +429,8 @@ router.post('/productos', [
         const prod = {
             nombre_ingrediente,
             costo_ingrediente,
-            cantidad_ingrediente
+            cantidad_ingrediente,
+            tipo_cantidad
         };
         const productoResult = await queryAsync(
             'INSERT INTO Ingredientes (nombre_ingrediente, costo_ingrediente, cantidad_ingrediente) VALUES ((?), ?, ?)', 
@@ -445,10 +457,16 @@ router.post('/productos', [
 });
 
 // Ruta para actualizar un producto
+// Ruta para actualizar un producto
 router.post('/actualizar-producto', [
     body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
     body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
+<<<<<<< HEAD
     body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto')
+=======
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto'),
+    body('tipo_cantidad').notEmpty().withMessage('Falta el tipo de cantidad')
+>>>>>>> brandonDev
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -462,6 +480,7 @@ router.post('/actualizar-producto', [
     }
 
     // Si no hay errores, procede con la lógica de actualización de producto
+<<<<<<< HEAD
     let {idIngrediente, nombre_ingrediente, costo_ingrediente, cantidad_ingrediente } = req.body;
     nombre_ingrediente = nombre_ingrediente.toLowerCase();
     
@@ -469,6 +488,13 @@ router.post('/actualizar-producto', [
         const existingProducto = await poolQuery(
             'SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND idIngrediente != ?',
             [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, idIngrediente]
+=======
+    const { idIngrediente, nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad } = req.body;
+
+    try {
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ? AND idIngrediente != ?',
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
+>>>>>>> brandonDev
         );
 
         if (existingProducto.length > 0) {
@@ -481,9 +507,14 @@ router.post('/actualizar-producto', [
             });
         }
 
+<<<<<<< HEAD
         await poolQuery(
             'UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ? WHERE idIngrediente = ?',
             [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, idIngrediente]
+=======
+        await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ?, tipo_cantidad = ? WHERE idIngrediente = ?',
+            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
+>>>>>>> brandonDev
         );
 
         res.render('links/productos', {
@@ -506,34 +537,49 @@ router.post('/actualizar-producto', [
 });
 
 // Ruta para eliminar un producto por nombre
+// Ruta para eliminar un producto por nombre
 router.post('/eliminar-producto', [
-    body('nombre_ingrediente').notEmpty().withMessage('Falta el nombre del producto')
+    body('nombre_ingrediente_eliminar').notEmpty().withMessage('Falta el nombre del producto')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             errors: errors.array(),
             data: req.body 
         });
     }
 
-    const { nombre_ingrediente } = req.body;
+    const { nombre_ingrediente_eliminar } = req.body;
 
     try {
+<<<<<<< HEAD
         const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ?', [nombre_ingrediente]);
+=======
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente_eliminar]);
+>>>>>>> brandonDev
 
         if (existingProducto.length === 0) {
             return res.render('links/productos', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
                 title: 'Productos',
                 errors: [{ msg: 'El producto no existe' }],
                 data: req.body
             });
         }
 
+<<<<<<< HEAD
         await poolQuery('DELETE FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ?', [nombre_ingrediente]);
+=======
+        await poolQuery('DELETE FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente_eliminar]);
+>>>>>>> brandonDev
 
         res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             success_msg: 'Producto eliminado correctamente',
             error_msg: null
@@ -541,6 +587,8 @@ router.post('/eliminar-producto', [
     } catch (err) {
         console.error(err);
         res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             success_msg: null,
             error_msg: 'Error al eliminar producto'
