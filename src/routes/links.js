@@ -402,8 +402,8 @@ router.post('/productos', [
 
     try {
 
-        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ?',
-            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad]
+        const existingProducto = await poolQuery('SELECT nombre_ingrediente FROM Ingredientes WHERE nombre_ingrediente = ?',
+            [nombre_ingrediente]
         );
 
         if (existingProducto.length > 0) {
@@ -505,34 +505,41 @@ router.post('/actualizar-producto', [
 });
 
 // Ruta para eliminar un producto por nombre
+// Ruta para eliminar un producto por nombre
 router.post('/eliminar-producto', [
-    body('nombre_ingrediente').notEmpty().withMessage('Falta el nombre del producto')
+    body('nombre_ingrediente_eliminar').notEmpty().withMessage('Falta el nombre del producto')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             errors: errors.array(),
             data: req.body 
         });
     }
 
-    const { nombre_ingrediente } = req.body;
+    const { nombre_ingrediente_eliminar } = req.body;
 
     try {
-        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente_eliminar]);
 
         if (existingProducto.length === 0) {
             return res.render('links/productos', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
                 title: 'Productos',
                 errors: [{ msg: 'El producto no existe' }],
                 data: req.body
             });
         }
 
-        await poolQuery('DELETE FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
+        await poolQuery('DELETE FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente_eliminar]);
 
         res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             success_msg: 'Producto eliminado correctamente',
             error_msg: null
@@ -540,6 +547,8 @@ router.post('/eliminar-producto', [
     } catch (err) {
         console.error(err);
         res.render('links/productos', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
             title: 'Productos',
             success_msg: null,
             error_msg: 'Error al eliminar producto'

@@ -89,7 +89,7 @@ async function eliminarProducto(event) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ nombre_ingrediente: nombreIngrediente })
+            body: JSON.stringify({ nombre_ingrediente_eliminar: nombreIngrediente })
         });
 
         if (!response.ok) {

@@ -143,11 +143,11 @@
 
                 <!-- Formulario de eliminar -->
                 <div class="tab-pane fade" id="eliminar" role="tabpanel" aria-labelledby="eliminar-tab">
-                    <form id="formEliminarProducto" onsubmit="eliminarProducto(event)" class="mt-3">
+                    <form id="formEliminarProducto" method="POST" action="/links/eliminar-producto" class="mt-3">
                         <div class="form-group">
-                            <label for="nombre_ingrediente_eliminar">Nombre del Producto</label>
-                            <input type="text" class="form-control" id="nombre_ingrediente_eliminar"
-                                name="nombre_ingrediente" readonly>
+                        <label for="nombre_ingrediente_eliminar">Nombre del Producto</label>
+                        <input type="text" class="form-control" id="nombre_ingrediente_eliminar" 
+                            name="nombre_ingrediente_eliminar" readonly>
                         </div>
                         <button type="submit" class="btn btn-danger mt-3">Eliminar Producto</button>
                     </form>
