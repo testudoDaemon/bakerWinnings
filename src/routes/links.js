@@ -381,10 +381,10 @@ router.get('/api/productos', async (req, res) => {
 
 // Ruta para agregar un producto
 router.post('/productos', [
-    body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
-    body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
-    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto'),
-    body('tipo_cantidad').notEmpty().withMessage('Falta el tipo de cantidad')
+    body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del ingrediente'),
+    body('costo_ingrediente').notEmpty().withMessage('Falta costo del ingrediente'),
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta cantidad del inrgeiente'),
+    body('tipo_cantidad').notEmpty().withMessage('Falta tipo de cantidad')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -397,16 +397,24 @@ router.post('/productos', [
         });
     }
 
-    // Si no hay errores, procede con la lógica de inserción de usuario
+    // Si no hay errores, procede con la lógica de inserción de ingredientes
     const { nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad } = req.body;
 
     try {
 
-        const existingProducto = await poolQuery('SELECT nombre_ingrediente FROM Ingredientes WHERE nombre_ingrediente = ?',
-            [nombre_ingrediente]
+        const existeNomIngrediente = await poolQuery('SELECT nombre_ingrediente FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ?',
+            [costo_ingrediente, cantidad_ingrediente, tipo_cantidad]
         );
-
-        if (existingProducto.length > 0) {
+        if (existeNomIngrediente.length > 0) {
+            return res.render('links/productos', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
+                title: 'Productos',
+                errors: [{ msg: 'El ingrediente ya existe' }],
+                data: req.body
+            });
+        }  else if (existingProducto.length > 0) {
             return res.render('links/productos', {
                 layout: 'main_menu',
                 stylesheets: ['/css/shome.css'],
@@ -414,24 +422,24 @@ router.post('/productos', [
                 errors: [{ msg: 'Se repiten los datos' }],
                 data: req.body
             });
+        } else {
+            const prod = {
+                nombre_ingrediente,
+                costo_ingrediente,
+                cantidad_ingrediente,
+                tipo_cantidad
+            };
+            const productoResult = await queryAsync('INSERT INTO Ingredientes SET ?', [prod]);
+            const idIng = productoResult.insertId;
+    
+            res.render('links/productos', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
+                title: 'Insertar Usuarios',
+                success_msg: 'Ingrediente insertado correctamente',
+                error_msg: null
+            });
         }
-
-        const prod = {
-            nombre_ingrediente,
-            costo_ingrediente,
-            cantidad_ingrediente,
-            tipo_cantidad
-        };
-        const productoResult = await queryAsync('INSERT INTO Ingredientes SET ?', [prod]);
-        const idIng = productoResult.insertId;
-
-        res.render('links/productos', {
-            layout: 'main_menu',
-            stylesheets: ['/css/shome.css'],
-            title: 'Insertar Usuarios',
-            success_msg: 'Ingrediente insertado correctamente',
-            error_msg: null
-        });
     } catch (err) {
         console.error(err);
         res.render('links/productos', {
@@ -439,18 +447,17 @@ router.post('/productos', [
             stylesheets: ['/css/shome.css'],
             title: 'Agregar productos',
             success_msg: null,
-            error_msg: 'Error al insertar producto'
+            error_msg: 'Error al insertar ingredientes'
         });
     }
 });
 
 // Ruta para actualizar un producto
-// Ruta para actualizar un producto
 router.post('/actualizar-producto', [
     body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
-    body('costo_ingrediente').notEmpty().withMessage('Falta el costo del producto'),
-    body('cantidad_ingrediente').notEmpty().withMessage('Falta la cantidad del producto'),
-    body('tipo_cantidad').notEmpty().withMessage('Falta el tipo de cantidad')
+    body('costo_ingrediente').notEmpty().withMessage('Falta costo del producto'),
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta cantidad del producto'),
+    body('tipo_cantidad').notEmpty().withMessage('Falta tipo de cantidad')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -505,9 +512,8 @@ router.post('/actualizar-producto', [
 });
 
 // Ruta para eliminar un producto por nombre
-// Ruta para eliminar un producto por nombre
 router.post('/eliminar-producto', [
-    body('nombre_ingrediente_eliminar').notEmpty().withMessage('Falta el nombre del producto')
+    body('nombre_ingrediente_eliminar').notEmpty().withMessage('Falta el nombre del ingrediente')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
