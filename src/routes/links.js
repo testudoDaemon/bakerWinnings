@@ -467,7 +467,7 @@ router.post('/actualizar-ingrediente', [
     const { idIngrediente, nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad } = req.body;
 
     try {
-        const selectNombre = await poolQuery('SELECT nombre_ingrediente, tipo_cantidad  FROM Ingredientes WHERE idIngrediente = ?', [idIngrediente]); 
+
         const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ? AND idIngrediente != ?',
             [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
         );
