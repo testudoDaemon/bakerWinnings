@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Función para mostrar mensajes en la interfaz
-    function showMessage(message, type) {
+    function showMessage(message, type, duration = 4000) {
         const messageElement = document.getElementById('instant-message');
         messageElement.textContent = message;
         messageElement.className = `alert alert-${type}`;
@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         setTimeout(() => {
             messageElement.style.display = 'none';
-        }, 4000);
+        }, duration);
     }
 
     // Validación para permitir solo letras

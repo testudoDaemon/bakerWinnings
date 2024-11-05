@@ -5,7 +5,7 @@
         <div class="col-md-6">
 
             {{#if errors}}
-            <div id="message" class="alert alert-danger">
+            <div id="error-messages" class="alert alert-danger">
                 <ul>
                     {{#each errors}}
                     <li>{{this.msg}}</li>
@@ -15,7 +15,7 @@
             {{/if}}
 
             {{#if success_msg}}
-            <div class="alert alert-success">
+            <div id="success-message" class="alert alert-success">
                 {{success_msg}}
             </div>
             {{/if}}
@@ -182,3 +182,16 @@
 <!-- Incluye el script de funciones -->
 <script src="/js/validadorP.js"></script>
 <script src="/js/funtions.js"></script>
+    <script>
+        // Ocultar mensajes después de 4 segundos
+        setTimeout(() => {
+            const errorMessages = document.getElementById('error-messages');
+            if (errorMessages) {
+                errorMessages.style.display = 'none';
+            }
+            const successMessage = document.getElementById('success-message');
+            if (successMessage) {
+                successMessage.style.display = 'none';
+            }
+        }, 4000);
+    </script>
