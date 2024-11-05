@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (cardInventario) {
         cardInventario.addEventListener('click', function () {
-            window.location.href = '/links/productos';
+            window.location.href = '/links/ingredientes';
         });
     }
 

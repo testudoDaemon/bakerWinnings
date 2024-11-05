@@ -69,7 +69,7 @@
             <div class="tab-content" id="productoTabsContent">
                 <!-- Formulario de ingresar -->
                 <div class="tab-pane fade show active" id="ingresar" role="tabpanel" aria-labelledby="ingresar-tab">
-                    <form action="/links/productos" method="POST" class="mt-3">
+                    <form action="/links/ingredientes" method="POST" class="mt-3">
                         <div class="form-group row justify-content-center">
                         <label for="nombre_ingrediente" class="col-sm-2 col-form-label text-right">Nombre del Ingrediente:</label>
                         <div class="col-sm-8">
@@ -79,19 +79,22 @@
                         <div class="form-group row justify-content-center">
                             <label for="costo_ingrediente" class="col-sm-2 col-form-label text-right">Costo del Ingrediente:</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" id="costo_ingrediente" name="costo_ingrediente" maxlength="4" minlength="2">
+                                <input type="text" class="form-control" id="costo_ingrediente" name="costo_ingrediente" maxlength="4" minlength="1">
                             </div>
                         </div>
                         <div class="form-group row justify-content-center">
                             <label for="cantidad_ingrediente" class="col-sm-2 col-form-label text-right">Cantidad del Ingrediente:</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" id="cantidad_ingrediente" name="cantidad_ingrediente" maxlength="4" minlength="2">
+                                <input type="text" class="form-control" id="cantidad_ingrediente" name="cantidad_ingrediente" maxlength="4" minlength="1">
                             </div>
                             <div class="col-sm-4">
                                 <select class="form-control" id="tipo_cantidad" name="tipo_cantidad">
                                     <option value="piezas">Piezas</option>
                                     <option value="kg">Kg</option>
                                     <option value="lts">Lts</option>
+                                    <option value="gr">Gr</option>
+                                    <option value="ml">Ml</option>
+
                                 </select>
                             </div>
                         </div>
@@ -105,7 +108,7 @@
 
                                 <!-- Formulario de actualizar -->
                 <div class="tab-pane fade" id="actualizar" role="tabpanel" aria-labelledby="actualizar-tab">
-                    <form id="updateProductForm" method="POST" action="/links/actualizar-producto" class="mt-3">
+                    <form id="updateProductForm" method="POST" action="/links/actualizar-ingrediente" class="mt-3">
                         <input type="hidden" id="idIngredienteActualizar" name="idIngrediente">
                         <div class="form-group row justify-content-center">
                             <label for="nombre_ingrediente_actualizar" class="col-sm-2 col-form-label text-right">Nombre del Ingrediente:</label>
@@ -143,7 +146,7 @@
 
                 <!-- Formulario de eliminar -->
                 <div class="tab-pane fade" id="eliminar" role="tabpanel" aria-labelledby="eliminar-tab">
-                    <form id="formEliminarProducto" method="POST" action="/links/eliminar-producto" class="mt-3">
+                    <form id="formEliminarProducto" method="POST" action="/links/eliminar-ingrediente" class="mt-3">
                         <div class="form-group">
                         <label for="nombre_ingrediente_eliminar">Nombre del Producto</label>
                         <input type="text" class="form-control" id="nombre_ingrediente_eliminar" 
@@ -158,7 +161,7 @@
 
         <!-- Columna de la derecha para la tabla -->
         <div class="col-md-6">
-            <h3>Lista de Productos</h3>
+            <h3>Lista de Ingredientes</h3>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -169,7 +172,7 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="tabla-productos"></tbody>
+                <tbody id="tabla-ingredientes"></tbody>
             </table>
         </div>
     </div>
