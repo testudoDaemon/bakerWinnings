@@ -378,11 +378,11 @@ router.get('/api/ingredientes', async (req, res) => {
     }
 });
 
-// Ruta para agregar un producto
+// Ruta para agregar un ingredientes
 router.post('/ingredientes', [
-    body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
-    body('costo_ingrediente').notEmpty().withMessage('Falta costo del producto'),
-    body('cantidad_ingrediente').notEmpty().withMessage('Falta cantidad del producto'),
+    body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del ingrediente'),
+    body('costo_ingrediente').notEmpty().withMessage('Falta costo del ingrediente'),
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta cantidad del ingrediente'),
     body('tipo_cantidad').notEmpty().withMessage('Falta tipo de cantidad')
 ], async (req, res) => {
     const errors = validationResult(req);
@@ -401,7 +401,7 @@ router.post('/ingredientes', [
 
     try {
 
-        const existeNomIngrediente = await poolQuery('SELECT nombre_ingrediente FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
+        const existeNomIngrediente = await poolQuery('SELECT LOWER(nombre_ingrediente) FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ?', [nombre_ingrediente]);
         const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ?',
             [costo_ingrediente, cantidad_ingrediente, tipo_cantidad]
         );
@@ -414,7 +414,7 @@ router.post('/ingredientes', [
                 layout: 'main_menu',
                 stylesheets: ['/css/shome.css'],
                 title: 'Productos',
-                errors: [{ msg: 'El ingrediente ya existe' }],
+                errors: [{ msg: 'Se repiten los datos' }],
                 data: req.body
             });
         }  else if (existingProducto.length > 0) {
@@ -457,9 +457,9 @@ router.post('/ingredientes', [
 
 // Ruta para actualizar un producto
 router.post('/actualizar-ingrediente', [
-    body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
-    body('costo_ingrediente').notEmpty().withMessage('Falta costo del producto'),
-    body('cantidad_ingrediente').notEmpty().withMessage('Falta cantidad del producto'),
+    body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del ingrediente'),
+    body('costo_ingrediente').notEmpty().withMessage('Falta costo del ingrediente'),
+    body('cantidad_ingrediente').notEmpty().withMessage('Falta cantidad del ingrediente'),
     body('tipo_cantidad').notEmpty().withMessage('Falta tipo de cantidad')
 ], async (req, res) => {
     const errors = validationResult(req);
@@ -477,22 +477,36 @@ router.post('/actualizar-ingrediente', [
     const { idIngrediente, nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad } = req.body;
 
     try {
+        const nombresIngredientes = await poolQuery('SELECT LOWER(nombre_ingrediente) FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ?', [nombre_ingrediente]);
+        const tipoIngrediente = await poolQuery('SELECT tipo_cantidad FROM Ingredientes WHERE tipo_cantidad = ?', [tipo_cantidad]);
+        console.log(nombre_ingrediente);
+        console.log(tipoIngrediente);
 
-        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE nombre_ingrediente = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ? AND idIngrediente != ?',
+        if(nombresIngredientes.length > 0 && tipoIngrediente.length > 0) {
+            return res.render('links/ingredientes', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
+                title: 'Ingredientes',
+                errors: [{ msg: 'Se repiten los datos' }],
+                data: req.body
+            });
+        } else if (nombresIngredientes.length > 0) {
+            const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ? AND idIngrediente != ?',
             [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
-        );
+            );
 
-        await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ?, tipo_cantidad = ? WHERE idIngrediente = ?',
-            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
-        );
+                await poolQuery('UPDATE Ingredientes SET LOWER(nombre_ingrediente) = ?, costo_ingrediente = ?, cantidad_ingrediente = ?, tipo_cantidad = ? WHERE idIngrediente = ?',
+                [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
+            );
 
-        res.render('links/ingredientes', {
-            layout: 'main_menu',
-            stylesheets: ['/css/shome.css'],
-            title: 'Ingredientes',
-            success_msg: 'Ingrediente actualizado correctamente',
-            error_msg: null
-        });
+            res.render('links/ingredientes', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
+                title: 'Ingredientes',
+                success_msg: 'Ingrediente actualizado correctamente',
+                error_msg: null
+            });
+        } else console.log('Pozo de caida');
     } catch (err) {
         console.error(err);
         res.render('links/ingredientes', {
@@ -507,7 +521,7 @@ router.post('/actualizar-ingrediente', [
 
 // Ruta para eliminar un producto por nombre
 router.post('/eliminar-ingrediente', [
-    body('nombre_ingrediente_eliminar').notEmpty().withMessage('Falta nombre del producto')
+    body('nombre_ingrediente_eliminar').notEmpty().withMessage('Falta nombre del ingrediente')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
