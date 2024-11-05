@@ -371,7 +371,6 @@ router.get('/ingredientes', (req, res) => {
 router.get('/api/ingredientes', async (req, res) => {
     try {
         const ingredientes = await pool.query('SELECT * FROM Ingredientes');
-        console.log('Ingredientes:', ingredientes);
         res.json(ingredientes);
     } catch (error) {
         console.error('Error al obtener los ingredientes: ', error);
@@ -397,16 +396,28 @@ router.post('/ingredientes', [
         });
     }
 
-    // Si no hay errores, procede con la lógica de inserción de usuario
+    // Si no hay errores, procede con la lógica de inserción de ingredientes
     const { nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad } = req.body;
 
     try {
 
-        const existingProducto = await poolQuery('SELECT nombre_ingrediente FROM Ingredientes WHERE nombre_ingrediente = ?',
-            [nombre_ingrediente]
+        const existeNomIngrediente = await poolQuery('SELECT nombre_ingrediente FROM Ingredientes WHERE nombre_ingrediente = ?', [nombre_ingrediente]);
+        const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ?',
+            [costo_ingrediente, cantidad_ingrediente, tipo_cantidad]
         );
 
-        if (existingProducto.length > 0) {
+        console.log('Nombre del ingrediente:', existeNomIngrediente);
+        console.log('La otra parte de ingredientes:', existingProducto);
+
+        if (existeNomIngrediente.length > 0) {
+            return res.render('links/ingredientes', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
+                title: 'Productos',
+                errors: [{ msg: 'El ingrediente ya existe' }],
+                data: req.body
+            });
+        }  else if (existingProducto.length > 0) {
             return res.render('links/ingredientes', {
                 layout: 'main_menu',
                 stylesheets: ['/css/shome.css'],
@@ -414,24 +425,24 @@ router.post('/ingredientes', [
                 errors: [{ msg: 'Se repiten los datos' }],
                 data: req.body
             });
+        } else {
+            const prod = {
+                nombre_ingrediente,
+                costo_ingrediente,
+                cantidad_ingrediente,
+                tipo_cantidad
+            };
+            const productoResult = await queryAsync('INSERT INTO Ingredientes SET ?', [prod]);
+            const idIng = productoResult.insertId;
+    
+            res.render('links/ingredientes', {
+                layout: 'main_menu',
+                stylesheets: ['/css/shome.css'],
+                title: 'Insertar Usuarios',
+                success_msg: 'Ingrediente insertado correctamente',
+                error_msg: null
+            });
         }
-
-        const prod = {
-            nombre_ingrediente,
-            costo_ingrediente,
-            cantidad_ingrediente,
-            tipo_cantidad
-        };
-        const productoResult = await queryAsync('INSERT INTO Ingredientes SET ?', [prod]);
-        const idIng = productoResult.insertId;
-
-        res.render('links/ingredientes', {
-            layout: 'main_menu',
-            stylesheets: ['/css/shome.css'],
-            title: 'Insertar Ingrediente',
-            success_msg: 'Ingrediente insertado correctamente',
-            error_msg: null
-        });
     } catch (err) {
         console.error(err);
         res.render('links/ingredientes', {
@@ -439,12 +450,11 @@ router.post('/ingredientes', [
             stylesheets: ['/css/shome.css'],
             title: 'Agregar Ingrediente',
             success_msg: null,
-            error_msg: 'Error al insertar producto'
+            error_msg: 'Error al insertar ingredientes'
         });
     }
 });
 
-// Ruta para actualizar un producto
 // Ruta para actualizar un producto
 router.post('/actualizar-ingrediente', [
     body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del producto'),
@@ -472,17 +482,6 @@ router.post('/actualizar-ingrediente', [
             [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
         );
 
-
-        if (existingProducto.length > 0 || selectNombre.length > 0) {
-            return res.render('links/ingredientes', {
-                layout: 'main_menu',
-                stylesheets: ['/css/shome.css'],
-                title: 'Ingredientes',
-                errors: [{ msg: 'Se repiten los datos' }],
-                data: req.body
-            });
-        }
-
         await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ?, tipo_cantidad = ? WHERE idIngrediente = ?',
             [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
         );
@@ -506,7 +505,6 @@ router.post('/actualizar-ingrediente', [
     }
 });
 
-// Ruta para eliminar un producto por nombre
 // Ruta para eliminar un producto por nombre
 router.post('/eliminar-ingrediente', [
     body('nombre_ingrediente_eliminar').notEmpty().withMessage('Falta nombre del producto')
