@@ -1,6 +1,6 @@
 async function buscarProducto() {
     try {
-        const response = await fetch('/links/api/productos', {
+        const response = await fetch('/links/api/ingredientes', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -20,7 +20,7 @@ async function buscarProducto() {
 }
 
 function generarTabla(productos) {
-    const tablaProductos = document.getElementById('tabla-productos');
+    const tablaProductos = document.getElementById('tabla-ingredientes');
     tablaProductos.innerHTML = '';
 
     productos.forEach(producto => {
@@ -61,7 +61,7 @@ async function editarProducto(event) {
     const tipo_cantidad = document.getElementById('tipo_cantidad_actualizar').value;
 
     try {
-        const response = await fetch('/links/actualizar-producto', {
+        const response = await fetch('/links/actualizar-ingrediente', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -72,7 +72,7 @@ async function editarProducto(event) {
         if (!response.ok) {
             throw new Error('Error al actualizar el producto');
         }
-        window.location.href = '/links/productos';
+        window.location.href = '/links/ingredientes';
     } catch (error) {
         console.error('Error:', error);
         alert('Error al actualizar el producto');
@@ -84,7 +84,7 @@ async function eliminarProducto(event) {
     const nombreIngrediente = document.getElementById('nombre_ingrediente_eliminar').value;
 
     try {
-        const response = await fetch('/links/eliminar-producto', {
+        const response = await fetch('/links/eliminar-ingrediente', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -95,7 +95,7 @@ async function eliminarProducto(event) {
         if (!response.ok) {
             throw new Error('Error al eliminar el producto');
         }
-        window.location.href = '/links/productos';
+        window.location.href = '/links/ingredientes';
     } catch (error) {
         console.error('Error:', error);
         alert('Error al eliminar el producto');
