@@ -1,9 +1,7 @@
 const mysql = require('mysql');
 const { promisify } = require('util');
 const { database } = require('./keys');
-const express = require('express');
 
-const app = express();
 const pool = mysql.createPool(database);
 
 pool.getConnection((err, connection) => {
@@ -21,11 +19,6 @@ pool.getConnection((err, connection) => {
         if (err.code === 'ECONNRESET') {
             errorMessage = 'DATABASE CONNECTION WAS RESET';
         }
-
-        // Renderizar la vista de error
-        app.get('*', (req, res) => {
-            res.render('error', { errorMessage });
-        });
 
         console.error(errorMessage);
         return;

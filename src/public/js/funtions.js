@@ -28,7 +28,7 @@ function generarTabla(productos) {
 
         fila.innerHTML = `
             <td>${producto.nombre_ingrediente}</td>
-            <td>${producto.costo_ingrediente}</td>
+            <td>$${producto.costo_ingrediente}</td>
             <td>${producto.cantidad_ingrediente}</td>
             <td>${producto.tipo_cantidad}</td>
             <td><button class="btn btn-info">Seleccionar</button></td>

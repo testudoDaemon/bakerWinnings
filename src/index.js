@@ -37,7 +37,10 @@ app.use(session({
     secret: 'mysecret',
     resave: false,
     saveUninitialized: false,
-    store: new MySQLStore(database)
+    store: new MySQLStore(database),
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000 // 1 dia
+    }
 }));
 app.use(flash()); // mensajes flash
 app.use(morgan('dev')); // muestra por consola las peticiones http

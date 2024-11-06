@@ -477,6 +477,8 @@ router.post('/actualizar-ingrediente', [
     // Si no hay errores, procede con la lógica de actualización de producto
     const { idIngrediente, nombre_ingrediente_actualizar, costo_ingrediente_actualizar, cantidad_ingrediente_actualizar, tipo_cantidad_actualizar } = req.body;
 
+    const nombreIngredienteLower = nombre_ingrediente_actualizar.toLowerCase();
+
     console.log(req.body);
     try {
           // Verificar si los datos se repiten
@@ -497,7 +499,7 @@ router.post('/actualizar-ingrediente', [
 
         // Actualizar el producto
         await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ?, tipo_cantidad = ? WHERE idIngrediente = ?',
-            [nombre_ingrediente_actualizar, costo_ingrediente_actualizar, cantidad_ingrediente_actualizar, tipo_cantidad_actualizar, idIngrediente]
+            [nombreIngredienteLower, costo_ingrediente_actualizar, cantidad_ingrediente_actualizar, tipo_cantidad_actualizar, idIngrediente]
         );
 
         res.render('links/ingredientes', {
