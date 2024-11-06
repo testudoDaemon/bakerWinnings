@@ -457,10 +457,10 @@ router.post('/ingredientes', [
 
 // Ruta para actualizar un producto
 router.post('/actualizar-ingrediente', [
-    body('nombre_ingrediente').notEmpty().withMessage('Falta nombre del ingrediente'),
-    body('costo_ingrediente').notEmpty().withMessage('Falta costo del ingrediente'),
-    body('cantidad_ingrediente').notEmpty().withMessage('Falta cantidad del ingrediente'),
-    body('tipo_cantidad').notEmpty().withMessage('Falta tipo de cantidad')
+    body('nombre_ingrediente_actualizar').notEmpty().withMessage('Falta nombre del ingrediente'),
+    body('costo_ingrediente_actualizar').notEmpty().withMessage('Falta costo del ingrediente'),
+    body('cantidad_ingrediente_actualizar').notEmpty().withMessage('Falta cantidad del ingrediente'),
+    body('tipo_cantidad_actualizar').notEmpty().withMessage('Falta tipo de cantidad')
 ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -473,16 +473,19 @@ router.post('/actualizar-ingrediente', [
         });
     }
 
+    
     // Si no hay errores, procede con la lógica de actualización de producto
-    const { idIngrediente, nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad } = req.body;
+    const { idIngrediente, nombre_ingrediente_actualizar, costo_ingrediente_actualizar, cantidad_ingrediente_actualizar, tipo_cantidad_actualizar } = req.body;
 
+    console.log(req.body);
     try {
-        const nombresIngredientes = await poolQuery('SELECT LOWER(nombre_ingrediente) FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ?', [nombre_ingrediente]);
-        const tipoIngrediente = await poolQuery('SELECT tipo_cantidad FROM Ingredientes WHERE tipo_cantidad = ?', [tipo_cantidad]);
-        console.log(nombre_ingrediente);
-        console.log(tipoIngrediente);
+          // Verificar si los datos se repiten
+          const datosRepetidos = await poolQuery('SELECT * FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ? AND idIngrediente != ?',
+            [nombre_ingrediente_actualizar.toLowerCase(), costo_ingrediente_actualizar, cantidad_ingrediente_actualizar, tipo_cantidad_actualizar, idIngrediente]
+        );
 
-        if(nombresIngredientes.length > 0 && tipoIngrediente.length > 0) {
+        
+        if (datosRepetidos.length > 0) {
             return res.render('links/ingredientes', {
                 layout: 'main_menu',
                 stylesheets: ['/css/shome.css'],
@@ -490,23 +493,20 @@ router.post('/actualizar-ingrediente', [
                 errors: [{ msg: 'Se repiten los datos' }],
                 data: req.body
             });
-        } else if (nombresIngredientes.length > 0) {
-            const existingProducto = await poolQuery('SELECT * FROM Ingredientes WHERE LOWER(nombre_ingrediente) = ? AND costo_ingrediente = ? AND cantidad_ingrediente = ? AND tipo_cantidad = ? AND idIngrediente != ?',
-            [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
-            );
+        }
 
-                await poolQuery('UPDATE Ingredientes SET LOWER(nombre_ingrediente) = ?, costo_ingrediente = ?, cantidad_ingrediente = ?, tipo_cantidad = ? WHERE idIngrediente = ?',
-                [nombre_ingrediente, costo_ingrediente, cantidad_ingrediente, tipo_cantidad, idIngrediente]
-            );
+        // Actualizar el producto
+        await poolQuery('UPDATE Ingredientes SET nombre_ingrediente = ?, costo_ingrediente = ?, cantidad_ingrediente = ?, tipo_cantidad = ? WHERE idIngrediente = ?',
+            [nombre_ingrediente_actualizar, costo_ingrediente_actualizar, cantidad_ingrediente_actualizar, tipo_cantidad_actualizar, idIngrediente]
+        );
 
-            res.render('links/ingredientes', {
-                layout: 'main_menu',
-                stylesheets: ['/css/shome.css'],
-                title: 'Ingredientes',
-                success_msg: 'Ingrediente actualizado correctamente',
-                error_msg: null
-            });
-        } else console.log('Pozo de caida');
+        res.render('links/ingredientes', {
+            layout: 'main_menu',
+            stylesheets: ['/css/shome.css'],
+            title: 'Ingredientes',
+            success_msg: 'Ingrediente actualizado correctamente',
+            error_msg: null
+        });
     } catch (err) {
         console.error(err);
         res.render('links/ingredientes', {
